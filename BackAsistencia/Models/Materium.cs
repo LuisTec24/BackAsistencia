@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace BackAsistencia.Models;
+
+public partial class Materium
+{
+    public int IdMateria { get; set; }
+
+    public string Descripcion { get; set; } = null!;
+
+    public virtual ICollection<MateriaSalon> MateriaSalons { get; set; } = new List<MateriaSalon>();
+
+    public virtual ICollection<ProfesorMaterium> ProfesorMateria { get; set; } = new List<ProfesorMaterium>();
+}
