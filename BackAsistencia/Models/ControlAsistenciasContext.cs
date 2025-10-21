@@ -17,7 +17,7 @@ public partial class ControlAsistenciasContext : DbContext
 
     public virtual DbSet<Alumno> Alumnos { get; set; }
 
-    public virtual DbSet<Asistencium> Asistencia { get; set; }
+    public virtual DbSet<Asistencia> Asistencia { get; set; }
 
     public virtual DbSet<Horario> Horarios { get; set; }
 
@@ -29,7 +29,7 @@ public partial class ControlAsistenciasContext : DbContext
 
     public virtual DbSet<Profesor> Profesors { get; set; }
 
-    public virtual DbSet<ProfesorMaterium> ProfesorMateria { get; set; }
+    public virtual DbSet<ProfesorMateria> ProfesorMateria { get; set; }
 
     public virtual DbSet<Salon> Salons { get; set; }
 
@@ -58,7 +58,7 @@ public partial class ControlAsistenciasContext : DbContext
                 .HasConstraintName("FK__Alumno__ID_Horar__4BAC3F29");
         });
 
-        modelBuilder.Entity<Asistencium>(entity =>
+        modelBuilder.Entity<Asistencia>(entity =>
         {
             entity.HasKey(e => e.IdAsistencia).HasName("PK__Asistenc__8A115D6A553CF553");
 
@@ -157,7 +157,7 @@ public partial class ControlAsistenciasContext : DbContext
             entity.Property(e => e.Nombre).HasMaxLength(100);
         });
 
-        modelBuilder.Entity<ProfesorMaterium>(entity =>
+        modelBuilder.Entity<ProfesorMateria>(entity =>
         {
             entity.HasKey(e => e.IdProfesorMateria).HasName("PK__Profesor__B4B27523EDD4B0EE");
 

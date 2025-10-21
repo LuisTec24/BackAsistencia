@@ -11,5 +11,5 @@ public partial class Materium
 
     public virtual ICollection<MateriaSalon> MateriaSalons { get; set; } = new List<MateriaSalon>();
 
-    public virtual ICollection<ProfesorMaterium> ProfesorMateria { get; set; } = new List<ProfesorMaterium>();
+    public virtual ICollection<ProfesorMateria> ProfesorMateria { get; set; } = new List<ProfesorMateria>();
 }

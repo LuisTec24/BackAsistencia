@@ -13,5 +13,5 @@ public partial class Profesor
 
     public string Contrasena { get; set; } = null!;
 
-    public virtual ICollection<ProfesorMaterium> ProfesorMateria { get; set; } = new List<ProfesorMaterium>();
+    public virtual ICollection<ProfesorMateria> ProfesorMateria { get; set; } = new List<ProfesorMateria>();
 }

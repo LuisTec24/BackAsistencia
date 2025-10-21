@@ -13,11 +13,16 @@ public partial class Alumno
 
     public string Semestre { get; set; } = null!;
 
+
+
     public int IdHorario { get; set; }
 
     public string Contrasena { get; set; } = null!;
 
-    public virtual ICollection<Asistencium> Asistencia { get; set; } = new List<Asistencium>();
+    public virtual ICollection<Asistencia> Asistencia { get; set; } = new List<Asistencia>();
 
+    
+    
     public virtual Horario IdHorarioNavigation { get; set; } = null!;
+
 }

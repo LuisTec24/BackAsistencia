@@ -13,7 +13,7 @@ public partial class MateriaSalon
 
     public string? Status { get; set; }
 
-    public virtual ICollection<Asistencium> Asistencia { get; set; } = new List<Asistencium>();
+    public virtual ICollection<Asistencia> Asistencia { get; set; } = new List<Asistencia>();
 
     public virtual ICollection<HorarioMateriaSalon> HorarioMateriaSalons { get; set; } = new List<HorarioMateriaSalon>();
 
