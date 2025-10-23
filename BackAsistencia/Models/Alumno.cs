@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using BackAsistencia.Models;
 
 namespace BackAsistencia.Models;
 
@@ -13,16 +14,9 @@ public partial class Alumno
 
     public string Semestre { get; set; } = null!;
 
-
-
-    public int IdHorario { get; set; }
-
     public string Contrasena { get; set; } = null!;
 
     public virtual ICollection<Asistencia> Asistencia { get; set; } = new List<Asistencia>();
 
-    
-    
-    public virtual Horario IdHorarioNavigation { get; set; } = null!;
-
+    public virtual ICollection<Horario> Horarios { get; set; } = new List<Horario>();
 }

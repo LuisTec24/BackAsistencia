@@ -23,38 +23,66 @@ namespace BackAsistencia.Controllers
             _context = context;
         }
 
-        // GET: api/Alumnoes
+        // GET: api/Alumnos
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Alumno>>> GetAlumnos()
+        public async Task<ActionResult<IEnumerable<AlumnoDTO>>> GetAlumnos()
         {
-            return await _context.Alumnos.ToListAsync();
+            var alumnos = await _context.Alumnos
+                .Select(a => new AlumnoDTO
+                {
+                    NumeroControl = a.NumeroControl,
+                    Nombre = a.Nombre,
+                    Carrera = a.Carrera,
+                    Semestre = a.Semestre,
+                    Contrasena = a.Contrasena // Inclúyelo solo si es necesario
+                })
+                .ToListAsync();
+
+            return Ok(alumnos);
         }
 
-        // GET: api/Alumnoes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Alumno>> GetAlumno(int id)
+        public async Task<ActionResult<AlumnoDTO>> GetAlumno(int id)
         {
-            var alumno = await _context.Alumnos.FindAsync(id);
+            var alumno = await _context.Alumnos
+                .Where(a => a.NumeroControl == id)
+                .Select(a => new AlumnoDTO
+                {
+                    NumeroControl = a.NumeroControl,
+                    Nombre = a.Nombre,
+                    Carrera = a.Carrera,
+                    Semestre = a.Semestre,
+                    Contrasena = a.Contrasena // Inclúyelo solo si es necesario
+                })
+                .FirstOrDefaultAsync();
 
             if (alumno == null)
             {
                 return NotFound();
             }
 
-            return alumno;
+            return Ok(alumno);
         }
 
-        // PUT: api/Alumnoes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAlumno(int id, Alumno alumno)
+        public async Task<IActionResult> PutAlumno(int id, [FromBody] AlumnoDTO dto)
         {
-            if (id != alumno.NumeroControl)
+            if (id != dto.NumeroControl)
             {
-                return BadRequest();
+                return BadRequest("El número de control en la URL no coincide con el del cuerpo.");
             }
 
-            _context.Entry(alumno).State = EntityState.Modified;
+            var alumno = await _context.Alumnos.FindAsync(id);
+            if (alumno == null)
+            {
+                return NotFound("No se encontró el alumno.");
+            }
+
+            // Actualizar solo los campos definidos en el DTO
+            alumno.Nombre = dto.Nombre;
+            alumno.Carrera = dto.Carrera;
+            alumno.Semestre = dto.Semestre;
+            alumno.Contrasena = dto.Contrasena; // Considera encriptarla si es sensible
 
             try
             {
@@ -64,7 +92,7 @@ namespace BackAsistencia.Controllers
             {
                 if (!AlumnoExists(id))
                 {
-                    return NotFound();
+                    return NotFound("El alumno ya no existe.");
                 }
                 else
                 {
@@ -101,7 +129,7 @@ namespace BackAsistencia.Controllers
         //    return CreatedAtAction("GetAlumno", new { id = alumno.NumeroControl }, alumno);
         //}
 
-[HttpPost]
+        [HttpPost]
 public async Task<ActionResult<Alumno>> PostAlumno([FromBody] AlumnoDTO dto)
         {
             var existe = await _context.Alumnos.AnyAsync(a => a.NumeroControl == dto.NumeroControl);
@@ -114,7 +142,6 @@ public async Task<ActionResult<Alumno>> PostAlumno([FromBody] AlumnoDTO dto)
                 Nombre = dto.Nombre,
                 Carrera = dto.Carrera,
                 Semestre = dto.Semestre,
-                //IdHorario = dto.IdHorario,
                 Contrasena = dto.Contrasena // Considera encriptarla si es sensible
             };
 

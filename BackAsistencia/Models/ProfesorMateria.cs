@@ -11,7 +11,7 @@ public partial class ProfesorMateria
 
     public int IdMateria { get; set; }
 
-    public virtual Materium IdMateriaNavigation { get; set; } = null!;
+    public virtual Materia IdMateriaNavigation { get; set; } = null!;
 
     public virtual Profesor IdProfesorNavigation { get; set; } = null!;
 }

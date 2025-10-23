@@ -41,7 +41,7 @@ namespace BackAsistencia.Controllers
             return asistencium;
         }
 
-        // PUT: api/Asistenciums/5
+        // PUT: api/Asistenciums/5x
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAsistencium(int id, Asistencia asistencium)
@@ -93,7 +93,6 @@ namespace BackAsistencia.Controllers
 
             _context.Asistencia.Add(nueva);
             await _context.SaveChangesAsync();
-
             return CreatedAtAction("GetAsistencium", new { id = nueva.IdAsistencia }, nueva);
         }
 

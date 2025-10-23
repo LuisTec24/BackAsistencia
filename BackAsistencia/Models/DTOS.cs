@@ -27,6 +27,27 @@
     //}
 
 
+    public class SalonDTO
+    {
+        public int IdSalon { get; set; }
+
+        public int? IdEscaner { get; set; }
+
+        public string? Descripcion { get; set; }
+
+    }
+
+
+    public class MateriaSalonDTO
+    {
+        public int IdMateriaSalon { get; set; }
+
+        public int IdMateria { get; set; }
+
+        public int Idsalon { get; set; }
+
+    }
+
     public class AlumnoDTO
 
     {
@@ -37,8 +58,6 @@
     public string Carrera { get; set; } = null!;
 
     public string Semestre { get; set; } = null!;
-
-    public int IdHorario { get; set; }
 
     public string Contrasena { get; set; } = null!;
     }

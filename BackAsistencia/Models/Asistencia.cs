@@ -7,9 +7,9 @@ public partial class Asistencia
 {
     public int IdAsistencia { get; set; }
 
-    public int IdMateriaSalon { get; set; }    public int NumeroControl { get; set; }
+    public int IdMateriaSalon { get; set; }
 
-
+    public int NumeroControl { get; set; }
 
     public DateOnly Fecha { get; set; }
 

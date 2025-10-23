@@ -19,13 +19,19 @@ public partial class ControlAsistenciasContext : DbContext
 
     public virtual DbSet<Asistencia> Asistencia { get; set; }
 
+    public virtual DbSet<HistorialHoraSalon> HistorialHoraSalons { get; set; }
+
+    public virtual DbSet<HistorialHorarioSemestre> HistorialHorarioSemestres { get; set; }
+
+    public virtual DbSet<HistorialMateriaSalon> HistorialMateriaSalons { get; set; }
+
     public virtual DbSet<Horario> Horarios { get; set; }
 
     public virtual DbSet<HorarioMateriaSalon> HorarioMateriaSalons { get; set; }
 
     public virtual DbSet<MateriaSalon> MateriaSalons { get; set; }
 
-    public virtual DbSet<Materium> Materia { get; set; }
+    public virtual DbSet<Materia> Materia { get; set; }
 
     public virtual DbSet<Profesor> Profesors { get; set; }
 
@@ -48,14 +54,8 @@ public partial class ControlAsistenciasContext : DbContext
             entity.Property(e => e.NumeroControl).ValueGeneratedNever();
             entity.Property(e => e.Carrera).HasMaxLength(100);
             entity.Property(e => e.Contrasena).HasMaxLength(512);
-            entity.Property(e => e.IdHorario).HasColumnName("ID_Horario");
             entity.Property(e => e.Nombre).HasMaxLength(100);
             entity.Property(e => e.Semestre).HasMaxLength(50);
-
-            entity.HasOne(d => d.IdHorarioNavigation).WithMany(p => p.Alumnos)
-                .HasForeignKey(d => d.IdHorario)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Alumno__ID_Horar__4BAC3F29");
         });
 
         modelBuilder.Entity<Asistencia>(entity =>
@@ -76,6 +76,53 @@ public partial class ControlAsistenciasContext : DbContext
                 .HasConstraintName("FK__Asistenci__Numer__60A75C0F");
         });
 
+        modelBuilder.Entity<HistorialHoraSalon>(entity =>
+        {
+            entity.HasKey(e => e.IdHorarioMateriaSalon).HasName("PK__Historia__A3A4AA3CB1186F26");
+
+            entity.ToTable("HistorialHoraSalon");
+
+            entity.Property(e => e.IdHorarioMateriaSalon)
+                .ValueGeneratedNever()
+                .HasColumnName("ID_HorarioMateriaSalon");
+            entity.Property(e => e.HlunJuv)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("HLunJuv");
+            entity.Property(e => e.Hsabados)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("HSabados");
+            entity.Property(e => e.Hviernes)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("HViernes");
+            entity.Property(e => e.IdMateria).HasColumnName("ID_Materia");
+        });
+
+        modelBuilder.Entity<HistorialHorarioSemestre>(entity =>
+        {
+            entity.HasKey(e => new { e.FechaFinSemestre, e.NumeroDeControl, e.IdHorario }).HasName("PK__Historia__0874DC85561AEB23");
+
+            entity.ToTable("HistorialHorarioSemestre");
+
+            entity.Property(e => e.NumeroDeControl).HasColumnName("Numero_de_control");
+            entity.Property(e => e.IdHorario).HasColumnName("ID_Horario");
+        });
+
+        modelBuilder.Entity<HistorialMateriaSalon>(entity =>
+        {
+            entity.HasKey(e => e.IdMateriaSalon).HasName("PK__Historia__AE21C2ACFD613A54");
+
+            entity.ToTable("HistorialMateriaSalon");
+
+            entity.Property(e => e.IdMateriaSalon)
+                .ValueGeneratedNever()
+                .HasColumnName("ID_MateriaSalon");
+            entity.Property(e => e.IdMateria).HasColumnName("ID_Materia");
+            entity.Property(e => e.IdSalon).HasColumnName("ID_Salon");
+        });
+
         modelBuilder.Entity<Horario>(entity =>
         {
             entity.HasKey(e => e.IdHorario).HasName("PK__Horario__77A009BD0301AC9F");
@@ -83,6 +130,10 @@ public partial class ControlAsistenciasContext : DbContext
             entity.ToTable("Horario");
 
             entity.Property(e => e.IdHorario).HasColumnName("ID_Horario");
+
+            entity.HasOne(d => d.NumeroControlNavigation).WithMany(p => p.Horarios)
+                .HasForeignKey(d => d.NumeroControl)
+                .HasConstraintName("FK_Asistencia_Alumno");
         });
 
         modelBuilder.Entity<HorarioMateriaSalon>(entity =>
@@ -124,8 +175,7 @@ public partial class ControlAsistenciasContext : DbContext
             entity.Property(e => e.IdMateriaSalon).HasColumnName("ID_MateriaSalon");
             entity.Property(e => e.IdMateria).HasColumnName("ID_Materia");
             entity.Property(e => e.IdSalon).HasColumnName("ID_Salon");
-            entity.Property(e => e.Status).HasMaxLength(50);
-
+            
             entity.HasOne(d => d.IdMateriaNavigation).WithMany(p => p.MateriaSalons)
                 .HasForeignKey(d => d.IdMateria)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -137,7 +187,7 @@ public partial class ControlAsistenciasContext : DbContext
                 .HasConstraintName("FK__MateriaSa__ID_Sa__59063A47");
         });
 
-        modelBuilder.Entity<Materium>(entity =>
+        modelBuilder.Entity<Materia>(entity =>
         {
             entity.HasKey(e => e.IdMateria).HasName("PK__Materia__4BAC7BD9FE5EA0CF");
 

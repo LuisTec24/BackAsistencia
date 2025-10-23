@@ -11,7 +11,9 @@ public partial class Horario
 
     public DateOnly FechaFinSemestre { get; set; }
 
-    public virtual ICollection<Alumno> Alumnos { get; set; } = new List<Alumno>();
+    public int? NumeroControl { get; set; }
 
     public virtual ICollection<HorarioMateriaSalon> HorarioMateriaSalons { get; set; } = new List<HorarioMateriaSalon>();
+
+    public virtual Alumno? NumeroControlNavigation { get; set; }
 }
