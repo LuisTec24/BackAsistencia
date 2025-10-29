@@ -205,6 +205,8 @@ public partial class ControlAsistenciasContext : DbContext
             entity.Property(e => e.Contrasena).HasMaxLength(512);
             entity.Property(e => e.Departamento).HasMaxLength(100);
             entity.Property(e => e.Nombre).HasMaxLength(100);
+            entity.Property(e => e.Correo).HasMaxLength(100);
+
         });
 
         modelBuilder.Entity<ProfesorMateria>(entity =>

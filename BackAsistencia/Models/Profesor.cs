@@ -13,5 +13,7 @@ public partial class Profesor
 
     public string Contrasena { get; set; } = null!;
 
+    public string Correo { get; set; } = null!;
+
     public virtual ICollection<ProfesorMateria> ProfesorMateria { get; set; } = new List<ProfesorMateria>();
 }

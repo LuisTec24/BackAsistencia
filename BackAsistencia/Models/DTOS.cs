@@ -60,5 +60,20 @@
     public string Semestre { get; set; } = null!;
 
     public string Contrasena { get; set; } = null!;
+
     }
-        }
+
+    public class LoginDTO
+    {
+        public int NC { get; set; }
+        public string PasswordHash { get; set; }
+    }
+
+
+    public class LoginDTOM
+    {
+        public string Correo { get; set; }
+        public string PasswordHash { get; set; }
+    }
+
+}
