@@ -76,4 +76,16 @@
         public string PasswordHash { get; set; }
     }
 
+    public class ProfesorDTO
+    {
+        public int IdProfesor { get; set; }
+
+        public string Nombre { get; set; } = null!;
+
+        public string? Departamento { get; set; }
+
+        public string Contrasena { get; set; } = null!;
+
+        public string Correo { get; set; } = null!;
+    }
 }
