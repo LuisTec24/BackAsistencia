@@ -31,7 +31,7 @@ namespace BackAsistencia.Controllers
             var maestro = await _context.Profesors.FirstOrDefaultAsync(m => m.Correo == request.Correo);
             if (maestro != null && BCrypt.Net.BCrypt.Verify(request.PasswordHash,maestro.Contrasena))
             {
-                var token = GenerarToken(maestro.IdProfesor, maestro.Nombre, "Maestro");
+                var token = GenerarToken(""+maestro.IdProfesor, maestro.Nombre, "Maestro");
                 return Ok(new { token, rol = "Maestro" });
             }
             else
@@ -55,7 +55,7 @@ namespace BackAsistencia.Controllers
         }
 
 
-        private string GenerarToken(int identificador, string nombre, string rol)
+        private string GenerarToken(string identificador, string nombre, string rol)
         {
             var secretKey = _configuration["Jwt:SecretKey"];
             if (string.IsNullOrEmpty(secretKey))
@@ -64,7 +64,7 @@ namespace BackAsistencia.Controllers
             var keyBytes = Encoding.UTF8.GetBytes(secretKey);
             var claims = new ClaimsIdentity(new[]
             {
-        new Claim(ClaimTypes.NameIdentifier, ""+identificador),
+        new Claim(ClaimTypes.NameIdentifier, identificador),
         new Claim(ClaimTypes.Name, nombre),
         new Claim(ClaimTypes.Role, rol)
     });

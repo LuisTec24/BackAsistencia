@@ -42,7 +42,7 @@ namespace BackAsistencia.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<AlumnoDTO>> GetAlumno(int id)
+        public async Task<ActionResult<AlumnoDTO>> GetAlumno(string id)
         {
             var alumno = await _context.Alumnos
                 .Where(a => a.NumeroControl == id)
@@ -65,7 +65,7 @@ namespace BackAsistencia.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAlumno(int id, [FromBody] AlumnoDTO dto)
+        public async Task<IActionResult> PutAlumno(string id, [FromBody] AlumnoDTO dto)
         {
             if (id != dto.NumeroControl)
             {
@@ -130,7 +130,7 @@ namespace BackAsistencia.Controllers
         //}
 
         [HttpPost]
-public async Task<ActionResult<Alumno>> PostAlumno([FromBody] AlumnoDTO dto)
+        public async Task<ActionResult<Alumno>> PostAlumno([FromBody] AlumnoDTO dto)
         {
             var existe = await _context.Alumnos.AnyAsync(a => a.NumeroControl == dto.NumeroControl);
             if (existe)
@@ -142,7 +142,7 @@ public async Task<ActionResult<Alumno>> PostAlumno([FromBody] AlumnoDTO dto)
                 Nombre = dto.Nombre,
                 Carrera = dto.Carrera,
                 Semestre = dto.Semestre,
-                Contrasena = dto.Contrasena // Considera encriptarla si es sensible
+                Contrasena = BCrypt.Net.BCrypt.HashPassword(dto.Contrasena) 
             };
 
             _context.Alumnos.Add(nuevo);
@@ -151,8 +151,8 @@ public async Task<ActionResult<Alumno>> PostAlumno([FromBody] AlumnoDTO dto)
             return CreatedAtAction("GetAlumno", new { id = nuevo.NumeroControl }, nuevo);
         }
 
-        // DELETE: api/Alumnoes/5
-        [HttpDelete("{id}")]
+    // DELETE: api/Alumnoes/5
+    [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAlumno(int id)
         {
             var alumno = await _context.Alumnos.FindAsync(id);
@@ -167,7 +167,7 @@ public async Task<ActionResult<Alumno>> PostAlumno([FromBody] AlumnoDTO dto)
             return NoContent();
         }
 
-        private bool AlumnoExists(int id)
+        private bool AlumnoExists(string id)
         {
             return _context.Alumnos.Any(e => e.NumeroControl == id);
         }

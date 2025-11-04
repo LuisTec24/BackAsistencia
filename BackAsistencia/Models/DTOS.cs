@@ -5,7 +5,7 @@
     public class CrearAsistenciaDTO
     {
         public int IdMateriaSalon { get; set; }
-        public int NumeroControl { get; set; }
+        public string NumeroControl { get; set; }
         public DateOnly Fecha { get; set; }
         public TimeOnly Hora { get; set; }
     }
@@ -51,7 +51,7 @@
     public class AlumnoDTO
 
     {
-    public int NumeroControl { get; set; }
+    public string NumeroControl { get; set; } = null!;
 
     public string Nombre { get; set; } = null!;
 
@@ -65,7 +65,7 @@
 
     public class LoginDTO
     {
-        public int NC { get; set; }
+        public string NC { get; set; }
         public string PasswordHash { get; set; }
     }
 

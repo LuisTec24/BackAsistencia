@@ -6,7 +6,7 @@ namespace BackAsistencia.Models;
 
 public partial class Alumno
 {
-    public int NumeroControl { get; set; }
+    public string NumeroControl { get; set; }
 
     public string Nombre { get; set; } = null!;
 

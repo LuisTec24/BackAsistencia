@@ -8,9 +8,7 @@ public partial class Asistencia
     public int IdAsistencia { get; set; }
 
     public int IdMateriaSalon { get; set; }
-
-    public int NumeroControl { get; set; }
-
+    public string NumeroControl { get; set; } = null!;
     public DateOnly Fecha { get; set; }
 
     public TimeOnly Hora { get; set; }

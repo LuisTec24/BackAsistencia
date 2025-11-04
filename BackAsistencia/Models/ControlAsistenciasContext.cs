@@ -47,7 +47,7 @@ public partial class ControlAsistenciasContext : DbContext
     {
         modelBuilder.Entity<Alumno>(entity =>
         {
-            entity.HasKey(e => e.NumeroControl).HasName("PK__Alumno__DF3DFCBEB7B352FF");
+            entity.HasKey(e => e.NumeroControl).HasName("PK_Alumno");
 
             entity.ToTable("Alumno");
 
@@ -73,7 +73,7 @@ public partial class ControlAsistenciasContext : DbContext
             entity.HasOne(d => d.NumeroControlNavigation).WithMany(p => p.Asistencia)
                 .HasForeignKey(d => d.NumeroControl)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Asistenci__Numer__60A75C0F");
+                .HasConstraintName("FK_Asistencia_NCAlumno");
         });
 
         modelBuilder.Entity<HistorialHoraSalon>(entity =>
@@ -133,7 +133,7 @@ public partial class ControlAsistenciasContext : DbContext
 
             entity.HasOne(d => d.NumeroControlNavigation).WithMany(p => p.Horarios)
                 .HasForeignKey(d => d.NumeroControl)
-                .HasConstraintName("FK_Asistencia_Alumno");
+                .HasConstraintName("FK_Horario_NCAlumno");
         });
 
         modelBuilder.Entity<HorarioMateriaSalon>(entity =>
