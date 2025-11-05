@@ -19,5 +19,7 @@ public partial class HorarioMateriaSalon
 
     public virtual Horario IdHorarioNavigation { get; set; } = null!;
 
+    public virtual ICollection<Asistencia> Asistencia { get; set; } = new List<Asistencia>();
+
     public virtual MateriaSalon IdMateriaSalonNavigation { get; set; } = null!;
 }

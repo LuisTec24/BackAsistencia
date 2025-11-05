@@ -78,14 +78,14 @@ namespace BackAsistencia.Controllers
         {
             // Validación opcional
             var alumnoExiste = await _context.Alumnos.AnyAsync(a => a.NumeroControl == dto.NumeroControl);
-            var materiaSalonExiste = await _context.MateriaSalons.AnyAsync(ms => ms.IdMateriaSalon == dto.IdMateriaSalon);
+            var materiaSalonExiste = await _context.MateriaSalons.AnyAsync(ms => ms.IdMateriaSalon == dto.ID_HorarioMateriaSalon);
 
             if (!alumnoExiste || !materiaSalonExiste)
                 return BadRequest("Alumno o Materia-Salón no encontrados.");
 
             var nueva = new Asistencia
             {
-                IdMateriaSalon = dto.IdMateriaSalon,
+                ID_HorarioMateriaSalon = dto.ID_HorarioMateriaSalon,
                 NumeroControl = dto.NumeroControl,
                 Fecha = dto.Fecha,
                 Hora = dto.Hora

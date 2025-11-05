@@ -63,10 +63,10 @@ public partial class ControlAsistenciasContext : DbContext
             entity.HasKey(e => e.IdAsistencia).HasName("PK__Asistenc__8A115D6A553CF553");
 
             entity.Property(e => e.IdAsistencia).HasColumnName("ID_Asistencia");
-            entity.Property(e => e.IdMateriaSalon).HasColumnName("ID_MateriaSalon");
+            entity.Property(e => e.ID_HorarioMateriaSalon).HasColumnName("ID_HorarioMateriaSalon");
 
-            entity.HasOne(d => d.IdMateriaSalonNavigation).WithMany(p => p.Asistencia)
-                .HasForeignKey(d => d.IdMateriaSalon)
+            entity.HasOne(d => d.ID_HorarioMateriaSalonNavigation).WithMany(p => p.Asistencia)
+                .HasForeignKey(d => d.ID_HorarioMateriaSalon)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Asistenci__ID_Ma__5FB337D6");
 

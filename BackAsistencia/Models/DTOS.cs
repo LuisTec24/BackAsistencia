@@ -4,7 +4,7 @@
 
     public class CrearAsistenciaDTO
     {
-        public int IdMateriaSalon { get; set; }
+        public int ID_HorarioMateriaSalon { get; set; }
         public string NumeroControl { get; set; }
         public DateOnly Fecha { get; set; }
         public TimeOnly Hora { get; set; }
