@@ -84,8 +84,7 @@ namespace BackAsistencia.Controllers
     }
 
 
-    // PUT: api/Profesors/5
-    [HttpPut("{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> PutProfesor(int id, ProfesorDTO dto)
         {
             if (id != dto.IdProfesor)
@@ -93,8 +92,23 @@ namespace BackAsistencia.Controllers
                 return BadRequest();
             }
 
-            var profesor = MapToEntity(dto);
-            _context.Entry(profesor).State = EntityState.Modified;
+            var profesor = await _context.Profesors.FindAsync(id);
+            if (profesor == null)
+            {
+                return NotFound();
+            }
+
+            // Actualizar campos
+            profesor.Nombre = dto.Nombre;
+            profesor.Departamento = dto.Departamento;
+            profesor.Correo = dto.Correo;
+
+            // Encriptar solo si la contraseña fue modificada
+            if (!string.IsNullOrWhiteSpace(dto.Contrasena) &&
+                !BCrypt.Net.BCrypt.Verify(dto.Contrasena, profesor.Contrasena))
+            {
+                profesor.Contrasena = BCrypt.Net.BCrypt.HashPassword(dto.Contrasena);
+            }
 
             try
             {
@@ -114,6 +128,7 @@ namespace BackAsistencia.Controllers
 
             return NoContent();
         }
+
 
         // DELETE: api/Profesors/5
         [HttpDelete("{id}")]

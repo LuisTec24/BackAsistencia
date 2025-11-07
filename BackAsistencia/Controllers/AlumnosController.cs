@@ -64,6 +64,7 @@ namespace BackAsistencia.Controllers
             return Ok(alumno);
         }
 
+
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAlumno(string id, [FromBody] AlumnoDTO dto)
         {
@@ -78,11 +79,16 @@ namespace BackAsistencia.Controllers
                 return NotFound("No se encontró el alumno.");
             }
 
-            // Actualizar solo los campos definidos en el DTO
             alumno.Nombre = dto.Nombre;
             alumno.Carrera = dto.Carrera;
             alumno.Semestre = dto.Semestre;
-            alumno.Contrasena = dto.Contrasena; // Considera encriptarla si es sensible
+
+            // Encriptar solo si la contraseña fue modificada
+            if (!string.IsNullOrWhiteSpace(dto.Contrasena) &&
+                !BCrypt.Net.BCrypt.Verify(dto.Contrasena, alumno.Contrasena))
+            {
+                alumno.Contrasena = BCrypt.Net.BCrypt.HashPassword(dto.Contrasena);
+            }
 
             try
             {
@@ -103,31 +109,6 @@ namespace BackAsistencia.Controllers
             return NoContent();
         }
 
-        //// POST: api/Alumnoes
-        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPost]
-        //public async Task<ActionResult<Alumno>> PostAlumno(Alumno alumno)
-        //{
-        //    _context.Alumnos.Add(alumno);
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateException)
-        //    {
-        //        if (AlumnoExists(alumno.NumeroControl))
-        //        {
-        //            return Conflict();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-
-        //    return CreatedAtAction("GetAlumno", new { id = alumno.NumeroControl }, alumno);
-        //}
 
         [HttpPost]
         public async Task<ActionResult<Alumno>> PostAlumno([FromBody] AlumnoDTO dto)

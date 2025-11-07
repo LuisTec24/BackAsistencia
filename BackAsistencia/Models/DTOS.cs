@@ -10,23 +10,42 @@
         public TimeOnly Hora { get; set; }
     }
 
-    //public class AsistenciaDTO
-    //{
-    //    public int IdAsistencia { get; set; }
-    //    public DateOnly Fecha { get; set; }
-    //    public TimeOnly Hora { get; set; }
+        // Materia
+            public class MateriaDto
+            {
+                public int IdMateria { get; set; }
+                public string Descripcion { get; set; } = null!;
+            }
 
-    //    public MateriaSalonDTO MateriaSalon { get; set; } = null!;
-    //    public AlumnoDTO Alumno { get; set; } = null!;
-    //}
-    //public class MateriaSalonDTO
-    //{
-    //    public int IdMateriaSalon { get; set; }
-    //    public string MateriaNombre { get; set; } = string.Empty;
-    //    public string SalonNombre { get; set; } = string.Empty;
-    //}
+            // Horario
+            public class HorarioDto
+            {
+                public int IdHorario { get; set; }
+                public DateOnly FechaInicioSemestre { get; set; }
+                public DateOnly FechaFinSemestre { get; set; }
+                public string NumeroControl { get; set; } = null!;
+            }
 
+            // HorarioMateriaSalon
+            public class HorarioMateriaSalonDto
+            {
+                public int IdHorarioMateriaSalon { get; set; }
+                public int IdMateriaSalon { get; set; }
+                public int IdHorario { get; set; }
+                public string? HlunJuv { get; set; }
+                public string? Hviernes { get; set; }
+                public string? Hsabados { get; set; }
+            }
 
+            // ProfesorMateria
+            public class ProfesorMateriaDto
+            {
+                public int IdProfesorMateria { get; set; }
+                public int IdProfesor { get; set; }
+                public int IdMateria { get; set; }
+            }
+        
+    
     public class SalonDTO
     {
         public int IdSalon { get; set; }

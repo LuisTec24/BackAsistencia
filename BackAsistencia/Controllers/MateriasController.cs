@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BackAsistencia.Models;
 
 namespace BackAsistencia.Controllers
 {
-    public class MateriasController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class MateriasController : ControllerBase
     {
         private readonly ControlAsistenciasContext _context;
 
@@ -18,134 +18,110 @@ namespace BackAsistencia.Controllers
             _context = context;
         }
 
-        // GET: Materias
-        public async Task<IActionResult> Index()
+        // GET: api/Materias
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<MateriaDto>>> GetMateria()
         {
-            return View(await _context.Materia.ToListAsync());
+            var materias = await _context.Materia
+                .Select(m => new MateriaDto
+                {
+                    IdMateria = m.IdMateria,
+                    Descripcion = m.Descripcion
+                })
+                .ToListAsync();
+
+            return Ok(materias);
         }
 
-        // GET: Materias/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: api/Materias/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<MateriaDto>> GetMateria(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var materia = await _context.Materia
-                .FirstOrDefaultAsync(m => m.IdMateria == id);
+                .Where(m => m.IdMateria == id)
+                .Select(m => new MateriaDto
+                {
+                    IdMateria = m.IdMateria,
+                    Descripcion = m.Descripcion
+                })
+                .FirstOrDefaultAsync();
+
             if (materia == null)
             {
                 return NotFound();
             }
 
-            return View(materia);
+            return Ok(materia);
         }
 
-        // GET: Materias/Create
-        public IActionResult Create()
+        // PUT: api/Materias/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutMateria(int id, MateriaDto dto)
         {
-            return View();
-        }
-
-        // POST: Materias/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdMateria,Descripcion")] Materia materia)
-        {
-            if (ModelState.IsValid)
+            if (id != dto.IdMateria)
             {
-                _context.Add(materia);
+                return BadRequest();
+            }
+
+            var materia = await _context.Materia.FindAsync(id);
+            if (materia == null)
+            {
+                return NotFound();
+            }
+
+            materia.Descripcion = dto.Descripcion;
+
+            try
+            {
+                _context.Update(materia);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
             }
-            return View(materia);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!MateriaExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
         }
 
-        // GET: Materias/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var materia = await _context.Materia.FindAsync(id);
-            if (materia == null)
-            {
-                return NotFound();
-            }
-            return View(materia);
-        }
-
-        // POST: Materias/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: api/Materias
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdMateria,Descripcion")] Materia materia)
+        public async Task<ActionResult<MateriaDto>> PostMateria(MateriaDto dto)
         {
-            if (id != materia.IdMateria)
+            var materia = new Materia
             {
-                return NotFound();
-            }
+                Descripcion = dto.Descripcion
+            };
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(materia);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!MateriaExists(materia.IdMateria))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(materia);
+            _context.Materia.Add(materia);
+            await _context.SaveChangesAsync();
+
+            dto.IdMateria = materia.IdMateria;
+
+            return CreatedAtAction(nameof(GetMateria), new { id = dto.IdMateria }, dto);
         }
 
-        // GET: Materias/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // DELETE: api/Materias/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteMateria(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var materia = await _context.Materia
-                .FirstOrDefaultAsync(m => m.IdMateria == id);
+            var materia = await _context.Materia.FindAsync(id);
             if (materia == null)
             {
                 return NotFound();
             }
 
-            return View(materia);
-        }
-
-        // POST: Materias/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var materia = await _context.Materia.FindAsync(id);
-            if (materia != null)
-            {
-                _context.Materia.Remove(materia);
-            }
-
+            _context.Materia.Remove(materia);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return NoContent();
         }
 
         private bool MateriaExists(int id)
