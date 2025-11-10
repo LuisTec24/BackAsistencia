@@ -107,4 +107,24 @@
 
         public string Correo { get; set; } = null!;
     }
+    
+    // > NUEVOS DTO PARA ASISTENCIA Y HORARIO (El back hace el pastel pa que el front solo muestre el pastel WUOOO) < //
+    public class AsistenciaItemDTO
+    {
+        public string Materia { get; set; }
+        public DateOnly Fecha { get; set; }
+        public TimeOnly Hora { get; set; }
+    }
+    public class HorarioItemDTO
+    {
+        public string NombreMateria { get; set; }
+        public string Profesor { get; set; }
+        public string Salon { get; set; }
+        public string HorarioTexto1 { get; set; }
+        public string HorarioDias1 { get; set; }
+        public string HorarioTexto2 { get; set; }
+        public string HorarioDias2 { get; set; }
+        public string HorarioTexto3 { get; set; }
+        public string HorarioDias3 { get; set; }
+    }
 }

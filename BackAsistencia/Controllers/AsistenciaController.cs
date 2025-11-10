@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BackAsistencia.Models;
+using Microsoft.AspNetCore.Authorization; 
+using System.Security.Claims;             
 
 namespace BackAsistencia.Controllers
 {
@@ -125,6 +127,39 @@ namespace BackAsistencia.Controllers
         private bool AsistenciumExists(int id)
         {
             return _context.Asistencia.Any(e => e.IdAsistencia == id);
+        }
+
+
+        // Comienza el metodo para el Historial de Asistencias.
+        [HttpGet("mi-historial-hoy")]
+        [Authorize(Roles = "Alumno")]
+        public async Task<ActionResult<IEnumerable<AsistenciaItemDTO>>> GetHistorialDeHoy()
+        {
+            var numeroControlStr = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(numeroControlStr))
+            {
+                return Unauthorized("Token inválido.");
+            }
+
+            // 2. Obtiene la fecha de hoy
+            var hoy = DateOnly.FromDateTime(DateTime.Today);
+
+
+            //var hoy = new DateOnly(2025, 11, 10); // <- Activar para poder mostrar las dos asistencias que se guardaron
+
+            var asistencias = await _context.Asistencia
+                .Where(a => a.NumeroControl == numeroControlStr && a.Fecha == hoy)
+                .OrderBy(a => a.Hora) 
+                .Select(a => new AsistenciaItemDTO
+                {
+                    Materia = a.ID_HorarioMateriaSalonNavigation.IdMateriaSalonNavigation.IdMateriaNavigation.Descripcion,
+                    Fecha = a.Fecha,
+                    Hora = a.Hora
+                })
+                .ToListAsync();
+
+            return Ok(asistencias);
         }
     }
 }
