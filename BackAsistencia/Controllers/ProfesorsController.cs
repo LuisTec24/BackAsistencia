@@ -2,6 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using BackAsistencia.Models;
 using BCrypt.Net;
+
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 namespace BackAsistencia.Controllers
 {
     [ApiController]
@@ -149,6 +152,34 @@ namespace BackAsistencia.Controllers
         private bool ProfesorExists(int id)
         {
             return _context.Profesors.Any(e => e.IdProfesor == id);
+        }
+
+
+        [HttpGet("mis-clases")]
+        [Authorize(Roles = "Maestro")] // Solo el rol "Maestro" puede llamar
+        public async Task<ActionResult<IEnumerable<MateriaDto>>> GetMisClases()
+        {
+            // 1. Lee el ID del profesor desde el token
+            var idProfesorStr = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            if (!int.TryParse(idProfesorStr, out int idProfesor))
+            {
+                return Unauthorized("Token inválido.");
+            }
+
+            // 2. Ejecuta la consulta
+            var materias = await _context.ProfesorMateria
+                .Where(pm => pm.IdProfesor == idProfesor) // Filtra por el profesor
+                .Select(pm => pm.IdMateriaNavigation) // Navega a la tabla Materia
+                .Distinct()
+                .Select(m => new MateriaDto // Usa el DTO que ya tienes
+                {
+                    IdMateria = m.IdMateria,
+                    Descripcion = m.Descripcion
+                })
+                .ToListAsync();
+
+            return Ok(materias);
         }
     }
 }

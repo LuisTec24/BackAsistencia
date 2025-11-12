@@ -141,7 +141,7 @@ namespace BackAsistencia.Controllers
 
         // Comienza el metodo para el Horario del alumno
         [HttpGet("mi-horario")]
-        //[Authorize(Roles = "Alumno")]
+        [Authorize(Roles = "Alumno")]
         public async Task<ActionResult<IEnumerable<HorarioItemDTO>>> GetMiHorario()
         {
             // 1. Lee el N.C. del alumno desde el token

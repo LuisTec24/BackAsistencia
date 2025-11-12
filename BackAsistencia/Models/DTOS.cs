@@ -127,4 +127,12 @@
         public string HorarioTexto3 { get; set; }
         public string HorarioDias3 { get; set; }
     }
+    // DTO para el reporte de asistencia que verá el profesor
+    public class AsistenciaReporteItemDTO
+    {
+        public int IdAsistencia { get; set; } // Para el link "Modificar"
+        public string NumeroControl { get; set; }
+        public string NombreAlumno { get; set; }
+        public string Estatus { get; set; } // "A", "F", o "J"
+    }
 }
