@@ -9,9 +9,12 @@ public partial class Asistencia
 
     public int ID_HorarioMateriaSalon { get; set; }
     public string NumeroControl { get; set; } = null!;
+    public string Estatus { get; set; } = null!;
+
     public DateOnly Fecha { get; set; }
 
     public TimeOnly Hora { get; set; }
+
 
     public virtual HorarioMateriaSalon ID_HorarioMateriaSalonNavigation { get; set; } = null!;
 

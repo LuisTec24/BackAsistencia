@@ -5,9 +5,11 @@
     public class CrearAsistenciaDTO
     {
         public int ID_HorarioMateriaSalon { get; set; }
-        public string NumeroControl { get; set; }
+        public required string NumeroControl { get; set; }
         public DateOnly Fecha { get; set; }
         public TimeOnly Hora { get; set; }
+        public required string Estatus { get; set; }
+
     }
 
         // Materia
@@ -65,6 +67,17 @@
 
         public int Idsalon { get; set; }
 
+    }
+
+
+
+
+    public class ScannerHorarioMateriaSalon
+    {
+        public int IdHorarioMateriaSalon { get; set; }
+
+        public string HorarioDia { get; set; } = null;
+    
     }
 
     public class AlumnoDTO

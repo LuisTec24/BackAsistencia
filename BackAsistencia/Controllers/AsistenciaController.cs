@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq;
+using System.Net.NetworkInformation;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using BackAsistencia.Models;
+using Humanizer;
+using Microsoft.AspNetCore.Authorization; 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BackAsistencia.Models;
-using Microsoft.AspNetCore.Authorization; 
-using System.Security.Claims;
-
-using System.Linq;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace BackAsistencia.Controllers
 {
@@ -77,12 +79,149 @@ namespace BackAsistencia.Controllers
         }
 
 
+
+
+        //metodo verificar Materia Scaneer
+        // sacar hora actual y fecha actual
+        //sacar en que salon esta mediante el idscaner 
+        //saco la materia con el que coincida el idsalon en materiasalon
+        // saco la conicidencia con Horariomateriasalon y comparo el dia para
+        // ver si coincide el horario con el que se ingreso (HLun,Hv,HS)
+        // si coincide guardo la asistencia si no mando mensaje de error
+        // buscar 
+        [HttpPost("scanner")]
+        public async Task<ActionResult<Salon>> Scanner(int IdScanner,string Nc)
+        {
+            //pruebas
+            //var ahora = DateTime.Today.AddHours(12).AddMinutes(30);
+            // var ahora = new DateTime(2025, 11, 18, 12, 30, 0);
+            // Hoy a las 9:30 AM
+            //12:00-13:00 hay una materia de
+            
+             var ahora = DateTime.Now;//
+            
+            int grupoDia = ahora.DayOfWeek switch
+            {
+                DayOfWeek.Monday => 1,
+                DayOfWeek.Tuesday => 1,
+                DayOfWeek.Wednesday => 1,
+                DayOfWeek.Thursday => 1,
+                DayOfWeek.Friday => 2,
+                DayOfWeek.Saturday => 3,
+                _ => 0 // Domingo u otro caso no definido
+            };
+            TimeSpan hora = ahora.TimeOfDay;
+            
+            int IdSalon = await _context.Salons.Where(a => a.IdEscaner == IdScanner).Select(a => a.IdSalon).FirstOrDefaultAsync();
+            var IdMateriaSalon = await _context.MateriaSalons.Where(a => a.IdSalon == IdSalon).Select(a => a.IdMateriaSalon).ToListAsync();
+            var listaHorariosMaterias = await _context.HorarioMateriaSalons.Where(a => IdMateriaSalon.Contains(a.IdMateriaSalon)).Select(a => a.IdHorarioMateriaSalon).ToListAsync();
+            List<ScannerHorarioMateriaSalon> HoraDiaYIHMS=null!;
+            int IdHorarioMateriaSalon=0;
+            switch (grupoDia)
+            {
+                case 1:
+                    HoraDiaYIHMS = await _context.HorarioMateriaSalons
+                    .Where(a => IdMateriaSalon.Contains(a.IdMateriaSalon))
+                    .Select(a => new ScannerHorarioMateriaSalon
+                    {
+                        HorarioDia = a.HlunJuv,
+                        IdHorarioMateriaSalon = a.IdHorarioMateriaSalon
+                    })
+                    .ToListAsync();
+                    break;
+
+                case 2:
+                    HoraDiaYIHMS = await _context.HorarioMateriaSalons
+                    .Where(a => IdMateriaSalon.Contains(a.IdMateriaSalon))
+                    .Select(a => new ScannerHorarioMateriaSalon
+                    {
+                    HorarioDia = a.Hviernes,
+                    IdHorarioMateriaSalon = a.IdHorarioMateriaSalon
+                    })
+                    .ToListAsync();
+                    break;
+
+
+                case 3:
+                    HoraDiaYIHMS = await _context.HorarioMateriaSalons
+                    .Where(a => IdMateriaSalon.Contains(a.IdMateriaSalon))
+                    .Select(a => new ScannerHorarioMateriaSalon
+                    {
+                        HorarioDia = a.Hsabados,
+                        IdHorarioMateriaSalon = a.IdHorarioMateriaSalon
+                    })
+                    .ToListAsync();
+                    break;
+            }
+            var Estatus="Ausente";
+            int IdRefencia = 0;
+            foreach (var horario in HoraDiaYIHMS)
+            {  
+            
+            //}
+            //for (int i = 0; i < HoraDiaYIHMS.Count; i++)
+            
+            //{
+            //    var horario = HoraDiaYIHMS[i];
+
+                // Asegúrate de que el formato sea "HH:mm-HH:mm"
+                if (!string.IsNullOrEmpty(horario.HorarioDia) && horario.HorarioDia.Contains('-'))
+                {
+                    var partes = horario.HorarioDia.Split('-');
+                    if (TimeSpan.TryParse(partes[0], out TimeSpan inicio) &&
+                        TimeSpan.TryParse(partes[1], out TimeSpan fin))
+                    {
+                        // Comparar si la hora actual está dentro del rango
+                        if (hora >= inicio && hora <= fin)
+                        {
+
+                            IdHorarioMateriaSalon = horario.IdHorarioMateriaSalon;
+
+                            var ExisteAsistencia = await _context.Asistencia.AnyAsync(a => a.ID_HorarioMateriaSalon == IdHorarioMateriaSalon && a.NumeroControl==Nc && a.Fecha==DateOnly.FromDateTime(ahora));
+                            if (ExisteAsistencia) 
+                                break;
+                            
+
+                            var d = inicio.Add(TimeSpan.FromMinutes(15));
+                            if (hora <= d)
+                            {
+                                IdRefencia = 1;
+                                Estatus = "Presente";
+                            }
+                            else {
+                                IdRefencia = 1;
+                                Estatus = "Retardo";
+                            }
+                            break; // Si solo necesitas el primero que coincida
+                        }
+                       
+                    }
+                }
+            }
+            //si hubo coincidencias entrass 
+            if (IdRefencia == 1)
+            {
+                var NuevoDTO = new CrearAsistenciaDTO
+                {
+                    ID_HorarioMateriaSalon = IdHorarioMateriaSalon,
+                    NumeroControl = Nc,
+                    Fecha = DateOnly.FromDateTime(ahora),
+                    Hora = TimeOnly.FromDateTime(ahora),
+                    Estatus = Estatus
+                };
+
+             var resp = await PostAsistencium(NuevoDTO);
+            }
+            
+                return Ok(IdHorarioMateriaSalon);
+            }
+
         [HttpPost]
         public async Task<ActionResult<Asistencia>> PostAsistencium([FromBody] CrearAsistenciaDTO dto)
         {
             // Validación opcional
             var alumnoExiste = await _context.Alumnos.AnyAsync(a => a.NumeroControl == dto.NumeroControl);
-            var materiaSalonExiste = await _context.MateriaSalons.AnyAsync(ms => ms.IdMateriaSalon == dto.ID_HorarioMateriaSalon);
+            var materiaSalonExiste = await _context.HorarioMateriaSalons.AnyAsync(ms => ms.IdHorarioMateriaSalon == dto.ID_HorarioMateriaSalon);
 
             if (!alumnoExiste || !materiaSalonExiste)
                 return BadRequest("Alumno o Materia-Salón no encontrados.");
@@ -92,23 +231,14 @@ namespace BackAsistencia.Controllers
                 ID_HorarioMateriaSalon = dto.ID_HorarioMateriaSalon,
                 NumeroControl = dto.NumeroControl,
                 Fecha = dto.Fecha,
-                Hora = dto.Hora
-            };
+                Hora = dto.Hora,
+                Estatus= dto.Estatus,
+    };
 
             _context.Asistencia.Add(nueva);
             await _context.SaveChangesAsync();
             return CreatedAtAction("GetAsistencium", new { id = nueva.IdAsistencia }, nueva);
         }
-
-        //[HttpPost]
-
-        //public async Task<ActionResult<Asistencium>> PostAsistencium(Asistencium asistencium)
-        //{
-        //    _context.Asistencia.Add(asistencium);
-        //    await _context.SaveChangesAsync();
-
-        //    return CreatedAtAction("GetAsistencium", new { id = asistencium.IdAsistencia }, asistencium);
-        //}
 
         // DELETE: api/Asistenciums/5
         [HttpDelete("{id}")]
