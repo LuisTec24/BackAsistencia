@@ -40,6 +40,8 @@ public partial class ControlAsistenciasContext : DbContext
 
     public virtual DbSet<Salon> Salons { get; set; }
 
+    public DbSet<BackAsistencia.Models.Administrador> Administrador { get; set; } = default!;
+
     //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     //    => optionsBuilder.UseSqlServer("Server=LUIS\\SQLEXPRESS; DataBase=ControlAsistencias;Integrated Security=true; TrustServerCertificate=True");
 
@@ -243,4 +245,5 @@ public partial class ControlAsistenciasContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
 }

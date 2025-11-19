@@ -101,6 +101,13 @@
         public string PasswordHash { get; set; }
     }
 
+    public class LoginDTOA
+    {
+        public string Correo { get; set; }
+        public string PasswordHash { get; set; }
+    }
+
+
 
     public class LoginDTOM
     {
@@ -155,4 +162,6 @@
         public string NombreAlumno { get; set; }
         public string Estatus { get; set; }
     }
+
+
 }

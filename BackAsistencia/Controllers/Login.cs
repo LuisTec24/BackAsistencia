@@ -55,6 +55,26 @@ namespace BackAsistencia.Controllers
         }
 
 
+
+        [HttpPost("ValidarAdministrador")]
+        [AllowAnonymous]
+        public async Task<IActionResult> VerificarAdministrador([FromBody] LoginDTOA request)
+        {
+            var alumno = await _context.Administrador.FirstOrDefaultAsync(a => a.Correo == request.Correo);
+            if (alumno != null && BCrypt.Net.BCrypt.Verify(request.PasswordHash, alumno.Contraseña))
+            {
+                var token = GenerarToken(alumno.Correo, alumno.Nombre, "Administrador");
+                return Ok(new { token, rol = "Administrador" });
+            }
+            return Unauthorized("Credenciales inválidas");
+        }
+
+
+
+
+
+
+
         private string GenerarToken(string identificador, string nombre, string rol)
         {
             var secretKey = _configuration["Jwt:SecretKey"];
