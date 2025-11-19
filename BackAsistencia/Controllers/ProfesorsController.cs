@@ -154,32 +154,34 @@ namespace BackAsistencia.Controllers
             return _context.Profesors.Any(e => e.IdProfesor == id);
         }
 
-
-        [HttpGet("mis-clases")]
-        [Authorize(Roles = "Maestro")] // Solo el rol "Maestro" puede llamar
-        public async Task<ActionResult<IEnumerable<MateriaDto>>> GetMisClases()
+        [HttpGet("mis-grupos")]
+        [Authorize(Roles = "Maestro")]
+        public async Task<ActionResult<IEnumerable<ClaseConHorarioDTO>>> GetMisGrupos()
         {
-            // 1. Lee el ID del profesor desde el token
             var idProfesorStr = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(idProfesorStr, out int idProfesor)) return Unauthorized();
 
-            if (!int.TryParse(idProfesorStr, out int idProfesor))
-            {
-                return Unauthorized("Token inválido.");
-            }
+            // 1. Obtener IDs de las materias que da el profe
+            var materiasDelProfe = await _context.ProfesorMateria
+                .Where(pm => pm.IdProfesor == idProfesor)
+                .Select(pm => pm.IdMateria)
+                .ToListAsync();
 
-            // 2. Ejecuta la consulta
-            var materias = await _context.ProfesorMateria
-                .Where(pm => pm.IdProfesor == idProfesor) // Filtra por el profesor
-                .Select(pm => pm.IdMateriaNavigation) // Navega a la tabla Materia
-                .Distinct()
-                .Select(m => new MateriaDto // Usa el DTO que ya tienes
+            // 2. Obtener TODOS los grupos (HorarioMateriaSalon) de esas materias
+                var grupos = await _context.HorarioMateriaSalons
+                .Include(h => h.IdMateriaSalonNavigation.IdMateriaNavigation)
+                .Include(h => h.IdMateriaSalonNavigation.IdSalonNavigation)
+                .Where(h => materiasDelProfe.Contains(h.IdMateriaSalonNavigation.IdMateria))
+                .Select(h => new ClaseConHorarioDTO
                 {
-                    IdMateria = m.IdMateria,
-                    Descripcion = m.Descripcion
+                    IdGrupo = h.IdHorarioMateriaSalon,
+                    DescripcionCompleta = h.IdMateriaSalonNavigation.IdMateriaNavigation.Descripcion +
+                                          " - " + h.IdMateriaSalonNavigation.IdSalonNavigation.Descripcion +
+                                             " (" + (h.HlunJuv ?? h.Hsabados ?? h.Hviernes ?? "S/H") + ")"
                 })
                 .ToListAsync();
 
-            return Ok(materias);
+            return Ok(grupos);
         }
     }
 }

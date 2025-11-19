@@ -275,10 +275,10 @@ namespace BackAsistencia.Controllers
             }
 
             // 2. Obtiene la fecha de hoy
-            //var hoy = DateOnly.FromDateTime(DateTime.Today);
+            var hoy = DateOnly.FromDateTime(DateTime.Today);
 
 
-            var hoy = new DateOnly(2025, 11, 10); // <- Activar para poder mostrar las dos asistencias que se guardaron
+            //var hoy = new DateOnly(2025, 11, 10);
 
             var asistencias = await _context.Asistencia
                 .Where(a => a.NumeroControl == numeroControlStr && a.Fecha == hoy)
@@ -293,42 +293,25 @@ namespace BackAsistencia.Controllers
 
             return Ok(asistencias);
         }
-        [HttpGet("reporte-grupo")]
+
+        [HttpGet("reporte-por-grupo")]
         [Authorize(Roles = "Maestro")]
-        public async Task<ActionResult<IEnumerable<AsistenciaReporteItemDTO>>> GetReporteAsistencia([FromQuery] int grupoId,[FromQuery] string fecha) // <-- 1. CAMBIA ESTO: Recibe un 'string'
+        public async Task<ActionResult<IEnumerable<AsistenciaReporteItemDTO>>> GetReportePorGrupo(
+        [FromQuery] int grupoId, // Recibe el ID_HorarioMateriaSalon
+        [FromQuery] string fecha)
         {
-            // --- 2. AÑADE ESTA VALIDACIÓN ---
-            if (!DateOnly.TryParse(fecha, out var fechaOnly))
-            {
-                return BadRequest("El formato de fecha es inválido. Use YYYY-MM-DD.");
-            }
-            // ---------------------------------
+            if (!DateOnly.TryParse(fecha, out var fechaOnly)) return BadRequest("Fecha inválida.");
 
-            // 3. Lee el N.C. del token (como ya lo tenías)
-            var numeroControlStr = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(numeroControlStr))
-            {
-                return Unauthorized("Token inválido.");
-            }
-
-            // 4. Tu consulta ahora usa la variable 'fechaOnly'
-            var alumnosEnGrupo = _context.Horarios
-                .Where(h => h.HorarioMateriaSalons.Any(hms => hms.IdHorarioMateriaSalon == grupoId))
-                .Select(h => h.NumeroControlNavigation)
-                .Include(a => a.Asistencia); // <-- No olvides el .Include()
-
-            var reporte = await alumnosEnGrupo
-                .Select(a => new {
-                    Alumno = a,
-                    AsistenciaRecord = a.Asistencia
-                        .FirstOrDefault(asist => asist.ID_HorarioMateriaSalon == grupoId && asist.Fecha == fechaOnly) // <-- Usa la variable convertida
-                })
-                .Select(r => new AsistenciaReporteItemDTO
+            // Consulta directa y exacta
+            var reporte = await _context.Asistencia
+                .Include(a => a.NumeroControlNavigation)
+                .Where(a => a.ID_HorarioMateriaSalon == grupoId && a.Fecha == fechaOnly)
+                .Select(a => new AsistenciaReporteItemDTO
                 {
-                    NumeroControl = r.Alumno.NumeroControl,
-                    NombreAlumno = r.Alumno.Nombre,
-                    IdAsistencia = r.AsistenciaRecord != null ? r.AsistenciaRecord.IdAsistencia : 0,
-                    Estatus = r.AsistenciaRecord != null ? "A" : "F" // Lógica de "Asistencia" vs "Falta"
+                    IdAsistencia = a.IdAsistencia,
+                    NumeroControl = a.NumeroControl,
+                    NombreAlumno = a.NumeroControlNavigation.Nombre,
+                    Estatus = a.Estatus 
                 })
                 .ToListAsync();
 

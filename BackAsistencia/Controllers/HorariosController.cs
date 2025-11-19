@@ -174,5 +174,6 @@ namespace BackAsistencia.Controllers
 
             return Ok(horario);
         }
+
     }
     }
