@@ -141,11 +141,18 @@
         public string HorarioDias3 { get; set; }
     }
     // DTO para el reporte de asistencia que verá el profesor
+    public class ClaseConHorarioDTO
+    {
+        public int IdGrupo { get; set; } // Es el ID_HorarioMateriaSalon
+        public string DescripcionCompleta { get; set; } // "Matemáticas - Aula 1 (08:00 - 09:00)"
+    }
+
+    // Este se queda igual para el reporte
     public class AsistenciaReporteItemDTO
     {
-        public int IdAsistencia { get; set; } // Para el link "Modificar"
+        public int IdAsistencia { get; set; }
         public string NumeroControl { get; set; }
         public string NombreAlumno { get; set; }
-        public string Estatus { get; set; } // "A", "F", o "J"
+        public string Estatus { get; set; }
     }
 }
