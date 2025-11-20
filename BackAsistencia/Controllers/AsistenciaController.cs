@@ -78,6 +78,51 @@ namespace BackAsistencia.Controllers
             return NoContent();
         }
 
+        // PUT: api/Asistenciums/5x
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("UpdateAsistencia")]
+        public async Task<IActionResult> UpdateAsistencia(int idAsistencia, [FromBody] UpdateAsistenciaDTO asistencia)
+        {
+            var asistencium = await _context.Asistencia.FindAsync(idAsistencia);
+
+            if (asistencium == null)
+            {
+                return NotFound("No se encontró la asistencia.");
+            }
+
+            // Actualizar campos
+            if (asistencia.Estatus != null)
+                asistencium.Estatus = asistencia.Estatus;
+
+            // FIX: DateOnly is a non-nullable value type, so check for default value instead of null
+            if (asistencia.Fecha != default)
+                asistencium.Fecha = asistencia.Fecha;
+
+            if (asistencia.Hora != default)
+                asistencium.Hora = asistencia.Hora;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!AsistenciumExists(idAsistencia))
+                {
+                    return NotFound("La asistencia ya no existe.");
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+        private bool AsistenciumExists(int id)
+        {
+            return _context.Asistencia.Any(e => e.IdAsistencia == id);
+        }
 
 
 
@@ -177,6 +222,16 @@ namespace BackAsistencia.Controllers
 
                             IdHorarioMateriaSalon = horario.IdHorarioMateriaSalon;
 
+
+                            //var PrimeraAsistencia = await _context.Asistencia.AnyAsync(a => a.ID_HorarioMateriaSalon == IdHorarioMateriaSalon  && a.Fecha == DateOnly.FromDateTime(ahora));
+                            //if (!PrimeraAsistencia)
+                            //{
+
+
+
+                            //}
+
+
                             var ExisteAsistencia = await _context.Asistencia.AnyAsync(a => a.ID_HorarioMateriaSalon == IdHorarioMateriaSalon && a.NumeroControl==Nc && a.Fecha==DateOnly.FromDateTime(ahora));
                             if (ExisteAsistencia) 
                                 break;
@@ -254,11 +309,6 @@ namespace BackAsistencia.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool AsistenciumExists(int id)
-        {
-            return _context.Asistencia.Any(e => e.IdAsistencia == id);
         }
 
 

@@ -11,9 +11,17 @@
         public required string Estatus { get; set; }
 
     }
+    //Update
+    public class UpdateAsistenciaDTO
+    {
+        public string Estatus { get; set; }
+        public DateOnly Fecha { get; set; }
+        public TimeOnly Hora { get; set; }
+    }
 
-        // Materia
-            public class MateriaDto
+
+    // Materia
+    public class MateriaDto
             {
                 public int IdMateria { get; set; }
                 public string Descripcion { get; set; } = null!;
@@ -163,5 +171,7 @@
         public string Estatus { get; set; }
     }
 
+    
 
-}
+
+    }
