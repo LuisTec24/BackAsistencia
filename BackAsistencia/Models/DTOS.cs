@@ -171,7 +171,6 @@
         public string Estatus { get; set; }
     }
 
-    
 
 
-    }
+}
