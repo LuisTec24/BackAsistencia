@@ -5,8 +5,8 @@
     public class CrearAsistenciaDTO
     {
         public int ID_HorarioMateriaSalon { get; set; }
-        public required string NumeroControl { get; set; }
         public DateOnly Fecha { get; set; }
+        public string Horario { get; set; }
         public TimeOnly Hora { get; set; }
         public required string Estatus { get; set; }
 
@@ -14,7 +14,7 @@
     //Update
     public class UpdateAsistenciaDTO
     {
-        public string Estatus { get; set; }
+        public string ? Estatus { get; set; }
         public DateOnly Fecha { get; set; }
         public TimeOnly Hora { get; set; }
     }
@@ -42,9 +42,7 @@
                 public int IdHorarioMateriaSalon { get; set; }
                 public int IdMateriaSalon { get; set; }
                 public int IdHorario { get; set; }
-                public string? HlunJuv { get; set; }
-                public string? Hviernes { get; set; }
-                public string? Hsabados { get; set; }
+          
             }
 
             // ProfesorMateria
@@ -52,7 +50,7 @@
             {
                 public int IdProfesorMateria { get; set; }
                 public int IdProfesor { get; set; }
-                public int IdMateria { get; set; }
+                public int IdMateriaSalon { get; set; }
             }
         
     
@@ -75,14 +73,21 @@
 
         public int Idsalon { get; set; }
 
+        public string? HlunJuv { get; set; }
+
+        public string? Hviernes { get; set; }
+
+        public string? Hsabados { get; set; }
+
+
     }
 
 
 
 
-    public class ScannerHorarioMateriaSalon
+    public class ScannerMateriaSalon
     {
-        public int IdHorarioMateriaSalon { get; set; }
+        public int IdMateriaSalon { get; set; }
 
         public string HorarioDia { get; set; } = null;
     
@@ -166,7 +171,6 @@
     public class AsistenciaReporteItemDTO
     {
         public int IdAsistencia { get; set; }
-        public string NumeroControl { get; set; }
         public string NombreAlumno { get; set; }
         public string Estatus { get; set; }
     }

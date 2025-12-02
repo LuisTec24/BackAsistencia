@@ -15,8 +15,6 @@ public partial class Alumno
         public string Semestre { get; set; } = null!;
 
         public string Contrasena { get; set; } = null!;
-
-    public virtual ICollection<Asistencia> Asistencia { get; set; } = new List<Asistencia>();
-
-    public virtual ICollection<Horario> Horarios { get; set; } = new List<Horario>();
+    //icolleccion envia //virtual recibe
+    public virtual ICollection<Horario> Horarios { get; set; } = new List<Horario>(); //relacion Para Fk//pasa propiedad
 }

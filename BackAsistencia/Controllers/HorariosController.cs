@@ -139,41 +139,41 @@ namespace BackAsistencia.Controllers
             }
 
 
-        // Comienza el metodo para el Horario del alumno
-        [HttpGet("mi-horario")]
-        [Authorize(Roles = "Alumno")]
-        public async Task<ActionResult<IEnumerable<HorarioItemDTO>>> GetMiHorario()
-        {
-            // 1. Lee el N.C. del alumno desde el token
-            var numeroControlStr = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        //// Comienza el metodo para el Horario del alumno
+        //[HttpGet("mi-horario")]
+        //[Authorize(Roles = "Alumno")]
+        //public async Task<ActionResult<IEnumerable<HorarioItemDTO>>> GetMiHorario()
+        //{
+        //    // 1. Lee el N.C. del alumno desde el token
+        //    var numeroControlStr = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
-            if (string.IsNullOrEmpty(numeroControlStr))
-            {
-                return Unauthorized("Token inválido.");
-            }
+        //    if (string.IsNullOrEmpty(numeroControlStr))
+        //    {
+        //        return Unauthorized("Token inválido.");
+        //    }
 
-            var horario = await _context.Horarios
-                .Where(h => h.NumeroControl == numeroControlStr)
-                .SelectMany(h => h.HorarioMateriaSalons)
-                .Select(hms => new HorarioItemDTO
-                {
-                    NombreMateria = hms.IdMateriaSalonNavigation.IdMateriaNavigation.Descripcion,
-                    Salon = hms.IdMateriaSalonNavigation.IdSalonNavigation.Descripcion,
-                    Profesor = hms.IdMateriaSalonNavigation.IdMateriaNavigation.ProfesorMateria
-                                  .Select(pm => pm.IdProfesorNavigation.Nombre)
-                                  .FirstOrDefault() ?? "Sin Asignar",
+        //    var horario = await _context.Horarios
+        //        .Where(h => h.NumeroControl == numeroControlStr)
+        //        .SelectMany(h => h.HorarioMateriaSalons)
+        //        .Select(hms => new HorarioItemDTO
+        //        {
+        //            NombreMateria = hms.IdMateriaSalonNavigation.IdMateriaNavigation.Descripcion,
+        //            Salon = hms.IdMateriaSalonNavigation.IdSalonNavigation.Descripcion,
+        //            Profesor = hms.IdMateriaSalonNavigation.IdMateriaNavigation.ProfesorMateria
+        //                          .Select(pm => pm.IdProfesorNavigation.Nombre)
+        //                          .FirstOrDefault() ?? "Sin Asignar",
 
-                    HorarioTexto1 = hms.HlunJuv,
-                    HorarioDias1 = !string.IsNullOrEmpty(hms.HlunJuv) ? "L - J" : null,
-                    HorarioTexto2 = hms.Hviernes,
-                    HorarioDias2 = !string.IsNullOrEmpty(hms.Hviernes) ? "V" : null,
-                    HorarioTexto3 = hms.Hsabados,
-                    HorarioDias3 = !string.IsNullOrEmpty(hms.Hsabados) ? "S" : null
-                })
-                .ToListAsync();
+        //            HorarioTexto1 = hms.HlunJuv,
+        //            HorarioDias1 = !string.IsNullOrEmpty(hms.HlunJuv) ? "L - J" : null,
+        //            HorarioTexto2 = hms.Hviernes,
+        //            HorarioDias2 = !string.IsNullOrEmpty(hms.Hviernes) ? "V" : null,
+        //            HorarioTexto3 = hms.Hsabados,
+        //            HorarioDias3 = !string.IsNullOrEmpty(hms.Hsabados) ? "S" : null
+        //        })
+        //        .ToListAsync();
 
-            return Ok(horario);
-        }
+        //    return Ok(horario);
+        //}
 
     }
     }

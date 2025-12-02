@@ -28,9 +28,9 @@ namespace BackAsistencia.Controllers
                     IdHorarioMateriaSalon = h.IdHorarioMateriaSalon,
                     IdMateriaSalon = h.IdMateriaSalon,
                     IdHorario = h.IdHorario,
-                    HlunJuv = h.HlunJuv,
-                    Hviernes = h.Hviernes,
-                    Hsabados = h.Hsabados
+                    //HlunJuv = h.HlunJuv,
+                    //Hviernes = h.Hviernes,
+                    //Hsabados = h.Hsabados
                 })
                 .ToListAsync();
 
@@ -48,9 +48,9 @@ namespace BackAsistencia.Controllers
                     IdHorarioMateriaSalon = h.IdHorarioMateriaSalon,
                     IdMateriaSalon = h.IdMateriaSalon,
                     IdHorario = h.IdHorario,
-                    HlunJuv = h.HlunJuv,
-                    Hviernes = h.Hviernes,
-                    Hsabados = h.Hsabados
+                    //HlunJuv = h.HlunJuv,
+                    //Hviernes = h.Hviernes,
+                    //Hsabados = h.Hsabados
                 })
                 .FirstOrDefaultAsync();
 
@@ -79,9 +79,9 @@ namespace BackAsistencia.Controllers
 
             entidad.IdMateriaSalon = dto.IdMateriaSalon;
             entidad.IdHorario = dto.IdHorario;
-            entidad.HlunJuv = dto.HlunJuv;
-            entidad.Hviernes = dto.Hviernes;
-            entidad.Hsabados = dto.Hsabados;
+            //entidad.HlunJuv = dto.HlunJuv;
+            //entidad.Hviernes = dto.Hviernes;
+            //entidad.Hsabados = dto.Hsabados;
 
             try
             {
@@ -102,17 +102,27 @@ namespace BackAsistencia.Controllers
             return NoContent();
         }
 
-        // POST: api/HorarioMateriaSalons
         [HttpPost]
         public async Task<ActionResult<HorarioMateriaSalonDto>> PostHorarioMateriaSalon(HorarioMateriaSalonDto dto)
         {
+            // Validar que el Horario existe
+            var horarioExiste = await _context.Horarios.AnyAsync(h => h.IdHorario == dto.IdHorario);
+            if (!horarioExiste)
+            {
+                return BadRequest($"El Horario con ID {dto.IdHorario} no existe.");
+            }
+
+            // Validar que el MateriaSalon existe (si también hay FK)
+            var materiaSalonExiste = await _context.MateriaSalons.AnyAsync(ms => ms.IdMateriaSalon == dto.IdMateriaSalon);
+            if (!materiaSalonExiste)
+            {
+                return BadRequest($"El MateriaSalon con ID {dto.IdMateriaSalon} no existe.");
+            }
+
             var entidad = new HorarioMateriaSalon
             {
                 IdMateriaSalon = dto.IdMateriaSalon,
-                IdHorario = dto.IdHorario,
-                HlunJuv = dto.HlunJuv,
-                Hviernes = dto.Hviernes,
-                Hsabados = dto.Hsabados
+                IdHorario = dto.IdHorario
             };
 
             _context.HorarioMateriaSalons.Add(entidad);
@@ -122,6 +132,7 @@ namespace BackAsistencia.Controllers
 
             return CreatedAtAction(nameof(GetHorarioMateriaSalon), new { id = dto.IdHorarioMateriaSalon }, dto);
         }
+
 
         // DELETE: api/HorarioMateriaSalons/5
         [HttpDelete("{id}")]

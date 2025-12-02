@@ -72,10 +72,10 @@ public partial class ControlAsistenciasContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Asistenci__ID_Ma__5FB337D6");
 
-            entity.HasOne(d => d.NumeroControlNavigation).WithMany(p => p.Asistencia)
-                .HasForeignKey(d => d.NumeroControl)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Asistencia_NCAlumno");
+            //entity.HasOne(d => d.NumeroControlNavigation).WithMany(p => p.Asistencia)
+            //    .HasForeignKey(d => d.NumeroControl)
+            //    .OnDelete(DeleteBehavior.ClientSetNull)
+            //    .HasConstraintName("FK_Asistencia_NCAlumno");
         });
 
         modelBuilder.Entity<HistorialHoraSalon>(entity =>
@@ -145,15 +145,15 @@ public partial class ControlAsistenciasContext : DbContext
             entity.ToTable("HorarioMateriaSalon");
 
             entity.Property(e => e.IdHorarioMateriaSalon).HasColumnName("ID_HorarioMateriaSalon");
-            entity.Property(e => e.HlunJuv)
-                .HasMaxLength(100)
-                .HasColumnName("HLunJuv");
-            entity.Property(e => e.Hsabados)
-                .HasMaxLength(100)
-                .HasColumnName("HSabados");
-            entity.Property(e => e.Hviernes)
-                .HasMaxLength(100)
-                .HasColumnName("HViernes");
+            //entity.Property(e => e.HlunJuv)
+            //    .HasMaxLength(100)
+            //    .HasColumnName("HLunJuv");
+            //entity.Property(e => e.Hsabados)
+            //    .HasMaxLength(100)
+            //    .HasColumnName("HSabados");
+            //entity.Property(e => e.Hviernes)
+            //    .HasMaxLength(100)
+            //    .HasColumnName("HViernes");
             entity.Property(e => e.IdHorario).HasColumnName("ID_Horario");
             entity.Property(e => e.IdMateriaSalon).HasColumnName("ID_MateriaSalon");
 
@@ -216,11 +216,11 @@ public partial class ControlAsistenciasContext : DbContext
             entity.HasKey(e => e.IdProfesorMateria).HasName("PK__Profesor__B4B27523EDD4B0EE");
 
             entity.Property(e => e.IdProfesorMateria).HasColumnName("ID_ProfesorMateria");
-            entity.Property(e => e.IdMateria).HasColumnName("ID_Materia");
+            entity.Property(e => e.IdMateriaSalon).HasColumnName("ID_Materia");
             entity.Property(e => e.IdProfesor).HasColumnName("ID_Profesor");
 
-            entity.HasOne(d => d.IdMateriaNavigation).WithMany(p => p.ProfesorMateria)
-                .HasForeignKey(d => d.IdMateria)
+            entity.HasOne(d => d.IdMateriaSalonNavigation).WithMany(p => p.ProfesorMateria)
+                .HasForeignKey(d => d.IdMateriaSalon)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__ProfesorM__ID_Ma__534D60F1");
 

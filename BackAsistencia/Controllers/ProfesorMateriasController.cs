@@ -27,7 +27,7 @@ namespace BackAsistencia.Controllers
                 {
                     IdProfesorMateria = pm.IdProfesorMateria,
                     IdProfesor = pm.IdProfesor,
-                    IdMateria = pm.IdMateria
+                    IdMateriaSalon = pm.IdMateriaSalon
                 })
                 .ToListAsync();
 
@@ -44,7 +44,7 @@ namespace BackAsistencia.Controllers
                 {
                     IdProfesorMateria = p.IdProfesorMateria,
                     IdProfesor = p.IdProfesor,
-                    IdMateria = p.IdMateria
+                    IdMateriaSalon = p.IdMateriaSalon
                 })
                 .FirstOrDefaultAsync();
 
@@ -72,7 +72,7 @@ namespace BackAsistencia.Controllers
             }
 
             entidad.IdProfesor = dto.IdProfesor;
-            entidad.IdMateria = dto.IdMateria;
+            entidad.IdMateriaSalon = dto.IdMateriaSalon;
 
             try
             {
@@ -100,7 +100,7 @@ namespace BackAsistencia.Controllers
             var entidad = new ProfesorMateria
             {
                 IdProfesor = dto.IdProfesor,
-                IdMateria = dto.IdMateria
+                IdMateriaSalon = dto.IdMateriaSalon
             };
 
             _context.ProfesorMateria.Add(entidad);

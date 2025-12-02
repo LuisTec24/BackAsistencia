@@ -71,6 +71,11 @@ namespace BackAsistencia.Controllers
                 return NotFound();
             }
 
+            MateriaSalon.HlunJuv = MateriaSalonDto.HlunJuv;
+
+            MateriaSalon.Hsabados = MateriaSalonDto.Hsabados;
+            MateriaSalon.Hviernes = MateriaSalonDto.Hviernes;
+
             MateriaSalon.IdSalon = MateriaSalonDto.Idsalon;
             MateriaSalon.IdMateria = MateriaSalonDto.IdMateria;
 
@@ -100,7 +105,13 @@ namespace BackAsistencia.Controllers
             var materiaSalon = new MateriaSalon
             {
                 IdMateria = materiaSalonDto.IdMateria,
-                IdSalon = materiaSalonDto.Idsalon
+                IdSalon = materiaSalonDto.Idsalon,
+                HlunJuv = materiaSalonDto.HlunJuv,
+                Hviernes = materiaSalonDto.Hviernes = materiaSalonDto.HlunJuv,
+                Hsabados = materiaSalonDto.Hsabados,
+
+
+
             };
 
             _context.MateriaSalons.Add(materiaSalon);

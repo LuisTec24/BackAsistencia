@@ -154,34 +154,34 @@ namespace BackAsistencia.Controllers
             return _context.Profesors.Any(e => e.IdProfesor == id);
         }
 
-        [HttpGet("mis-grupos")]
-        [Authorize(Roles = "Maestro")]
-        public async Task<ActionResult<IEnumerable<ClaseConHorarioDTO>>> GetMisGrupos()
-        {
-            var idProfesorStr = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            if (!int.TryParse(idProfesorStr, out int idProfesor)) return Unauthorized();
+        //[HttpGet("mis-grupos")]
+        //[Authorize(Roles = "Maestro")]
+        //public async Task<ActionResult<IEnumerable<ClaseConHorarioDTO>>> GetMisGrupos()
+        //{
+        //    var idProfesorStr = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        //    if (!int.TryParse(idProfesorStr, out int idProfesor)) return Unauthorized();
 
-            // 1. Obtener IDs de las materias que da el profe
-            var materiasDelProfe = await _context.ProfesorMateria
-                .Where(pm => pm.IdProfesor == idProfesor)
-                .Select(pm => pm.IdMateria)
-                .ToListAsync();
+        //    // 1. Obtener IDs de las materias que da el profe
+        //    var materiasDelProfe = await _context.ProfesorMateria
+        //        .Where(pm => pm.IdProfesor == idProfesor)
+        //        .Select(pm => pm.IdMateriaSalon)
+        //        .ToListAsync();
 
-            // 2. Obtener TODOS los grupos (HorarioMateriaSalon) de esas materias
-                var grupos = await _context.HorarioMateriaSalons
-                .Include(h => h.IdMateriaSalonNavigation.IdMateriaNavigation)
-                .Include(h => h.IdMateriaSalonNavigation.IdSalonNavigation)
-                .Where(h => materiasDelProfe.Contains(h.IdMateriaSalonNavigation.IdMateria))
-                .Select(h => new ClaseConHorarioDTO
-                {
-                    IdGrupo = h.IdHorarioMateriaSalon,
-                    DescripcionCompleta = h.IdMateriaSalonNavigation.IdMateriaNavigation.Descripcion +
-                                          " - " + h.IdMateriaSalonNavigation.IdSalonNavigation.Descripcion +
-                                             " (" + (h.HlunJuv ?? h.Hsabados ?? h.Hviernes ?? "S/H") + ")"
-                })
-                .ToListAsync();
+        //    // 2. Obtener TODOS los grupos (HorarioMateriaSalon) de esas materias
+        //        var grupos = await _context.HorarioMateriaSalons
+        //        .Include(h => h.IdMateriaSalonNavigation.IdMateriaNavigation)
+        //        .Include(h => h.IdMateriaSalonNavigation.IdSalonNavigation)
+        //        .Where(h => materiasDelProfe.Contains(h.IdMateriaSalonNavigation.IdMateria))
+        //        .Select(h => new ClaseConHorarioDTO
+        //        {
+        //            IdGrupo = h.IdHorarioMateriaSalon,
+        //            DescripcionCompleta = h.IdMateriaSalonNavigation.IdMateriaNavigation.Descripcion +
+        //                                  " - " + h.IdMateriaSalonNavigation.IdSalonNavigation.Descripcion +
+        //                                     " (" + (h.HlunJuv ?? h.Hsabados ?? h.Hviernes ?? "S/H") + ")"
+        //        })
+        //        .ToListAsync();
 
-            return Ok(grupos);
-        }
+        //    return Ok(grupos);
+        //}
     }
 }

@@ -134,7 +134,7 @@ namespace BackAsistencia.Controllers
 
     // DELETE: api/Alumnoes/5
     [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAlumno(int id)
+        public async Task<IActionResult> DeleteAlumno(string id)
         {
             var alumno = await _context.Alumnos.FindAsync(id);
             if (alumno == null)

@@ -9,7 +9,7 @@ public partial class Materia
 
     public string Descripcion { get; set; } = null!;
 
+    //envio a MateriaSalon
     public virtual ICollection<MateriaSalon> MateriaSalons { get; set; } = new List<MateriaSalon>();
 
-    public virtual ICollection<ProfesorMateria> ProfesorMateria { get; set; } = new List<ProfesorMateria>();
-}
+    }

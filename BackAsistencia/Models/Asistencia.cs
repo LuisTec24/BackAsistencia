@@ -10,7 +10,6 @@ public partial class Asistencia
     public int IdAsistencia { get; set; }
 
     public int ID_HorarioMateriaSalon { get; set; }
-    public string NumeroControl { get; set; } = null!;
     public string Estatus { get; set; } = null!;
 
     public DateOnly Fecha { get; set; }
@@ -18,7 +17,6 @@ public partial class Asistencia
     public TimeOnly Hora { get; set; }
 
 
-    public virtual HorarioMateriaSalon ID_HorarioMateriaSalonNavigation { get; set; } = null!;
+    public virtual HorarioMateriaSalon ID_HorarioMateriaSalonNavigation { get; set; } = null!;// vendria a ser la referencia de la fk
 
-    public virtual Alumno NumeroControlNavigation { get; set; } = null!;
 }
