@@ -95,6 +95,16 @@ namespace BackAsistencia.Controllers
         [HttpPost]
         public async Task<ActionResult<MateriaDto>> PostMateria(MateriaDto dto)
         {
+
+            var dtoDesc = dto.Descripcion.ToLower().Trim().Replace(" ", "").Replace("'", "");
+
+            var Existe = _context.Materia
+                .Any(m => m.Descripcion.ToLower().Trim().Replace(" ", "").Replace("'", "") == dtoDesc);
+
+            if (Existe) { 
+                return BadRequest("La materia ya existe");
+            }
+
             var materia = new Materia
             {
                 Descripcion = dto.Descripcion

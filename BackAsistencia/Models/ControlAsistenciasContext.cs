@@ -214,9 +214,9 @@ public partial class ControlAsistenciasContext : DbContext
         modelBuilder.Entity<ProfesorMateria>(entity =>
         {
             entity.HasKey(e => e.IdProfesorMateria).HasName("PK__Profesor__B4B27523EDD4B0EE");
-
+            
             entity.Property(e => e.IdProfesorMateria).HasColumnName("ID_ProfesorMateria");
-            entity.Property(e => e.IdMateriaSalon).HasColumnName("ID_Materia");
+            entity.Property(e => e.IdMateriaSalon).HasColumnName("ID_MateriaSalon");
             entity.Property(e => e.IdProfesor).HasColumnName("ID_Profesor");
 
             entity.HasOne(d => d.IdMateriaSalonNavigation).WithMany(p => p.ProfesorMateria)
