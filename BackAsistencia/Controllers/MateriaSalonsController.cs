@@ -29,7 +29,10 @@ namespace BackAsistencia.Controllers
                 {
                     IdMateriaSalon = s.IdMateriaSalon,
                     Idsalon = s.IdSalon,
-                    IdMateria = s.IdMateria
+                    IdMateria = s.IdMateria,
+                    HlunJuv=s.HlunJuv,
+                    Hsabados=s.Hsabados,
+                    Hviernes=s.Hviernes
                 })
                 .ToListAsync();
             return salons;
@@ -48,10 +51,13 @@ namespace BackAsistencia.Controllers
 
             var dto = new MateriaSalonDTO
             {
-                    Idsalon = salon.IdSalon,
+                Idsalon = salon.IdSalon,
                 IdMateria = salon.IdMateria,
-                IdMateriaSalon = salon.IdMateriaSalon
-                };
+                IdMateriaSalon = salon.IdMateriaSalon,
+                HlunJuv = salon.HlunJuv,
+                Hsabados = salon.Hsabados,
+                Hviernes = salon.Hviernes
+            };
 
             return dto;
         }
