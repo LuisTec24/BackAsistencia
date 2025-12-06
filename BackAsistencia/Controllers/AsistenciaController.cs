@@ -113,8 +113,8 @@ namespace BackAsistencia.Controllers
         public async Task<ActionResult<Salon>> Scanner(int IdScanner, string Nc)
         {
             //pruebas
-            var ahora = DateTime.Today.AddHours(8).AddMinutes(30);
-            // var ahora = new DateTime(2025, 11, 18, 12, 30, 0);
+         //   var ahora = DateTime.Today.AddHours(8).AddMinutes(30);
+             var ahora = new DateTime(2025, 12, 10, 10, 07, 0);
             // Hoy a las 9:30 AM
             //12:00-13:00 hay una materia de
 
@@ -185,7 +185,7 @@ namespace BackAsistencia.Controllers
 
             var Estatus = "Ausente";
             int IdRefencia = 0;
-
+            var IdMateriaSalonCoincidente=0;
 
             foreach (var horario in HoraDiaYIHMS)
             {
@@ -204,6 +204,8 @@ namespace BackAsistencia.Controllers
                         // Comparar si la hora actual está dentro del rango nada mas debe de haber uno en ese salon pues se supone que la busqueda esta hecha por salon en especifico
                         if (hora >= inicio && hora <= fin)
                         {
+                            IdMateriaSalonCoincidente = horario.IdMateriaSalon;
+
                             IdRefencia = 1;
                             Estatus = Estado(inicio, hora);
                             //ya es ya no entrara mas //
@@ -230,8 +232,11 @@ namespace BackAsistencia.Controllers
                                 //saco la lista de alumnos inscritos en esa materia
                                 var ListaIdHorarios = await _context.HorarioMateriaSalons.Where(a => a.IdMateriaSalon == horario.IdMateriaSalon).Select(a => a.IdHorario).ToListAsync();
                                 //lista de los IdHorarioMateriaSalon
-                                var ListaHorariosMateriaSalon = await _context.HorarioMateriaSalons.Where(a => ListaIdHorarios.Contains(a.IdHorario)).Select(a => a.IdHorarioMateriaSalon).ToListAsync();
-
+                                var ListaHorariosMateriaSalon = await _context.HorarioMateriaSalons
+                                .Where(a => ListaIdHorarios.Contains(a.IdHorario)
+                                 && a.IdMateriaSalon == horario.IdMateriaSalon) // ← filtro extra
+                                .Select(a => a.IdHorarioMateriaSalon)
+                                 .ToListAsync();
                                 //registrar faltas
                                 var respuesta = await BulkAsistencias(ListaHorariosMateriaSalon, ahora);
 
@@ -261,8 +266,8 @@ namespace BackAsistencia.Controllers
                     };
 
                     var idHorario = await _context.Horarios.Where(a => a.NumeroControl == Nc).Select(a => a.IdHorario).FirstAsync();
-                    var IdHorarioMateriaSalon = await _context.HorarioMateriaSalons.Where(a => a.IdHorario == idHorario).Select(a => a.IdHorarioMateriaSalon).FirstAsync();
-                    var idAsistencia = await _context.Asistencia.Where(a => a.ID_HorarioMateriaSalon == IdHorarioMateriaSalon && a.Fecha == DateOnly.FromDateTime(ahora)).Select(a => a.IdAsistencia).FirstAsync();
+                    var IdHorarioMateriaSalon = await _context.HorarioMateriaSalons.Where(a => a.IdHorario == idHorario && a.IdMateriaSalon==IdMateriaSalonCoincidente).Select(a => a.IdHorarioMateriaSalon).FirstAsync();
+                var idAsistencia = await _context.Asistencia.Where(a => a.ID_HorarioMateriaSalon == IdHorarioMateriaSalon && a.Fecha == DateOnly.FromDateTime(ahora)).Select(a => a.IdAsistencia).FirstAsync();
 
                     // se cambiara por el metodo PutAsistencia
                     var resp = await UpdateAsistencia(idAsistencia, NuevoDTO);

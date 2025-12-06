@@ -78,7 +78,6 @@ namespace BackAsistencia.Controllers
             }
 
             MateriaSalon.HlunJuv = MateriaSalonDto.HlunJuv;
-
             MateriaSalon.Hsabados = MateriaSalonDto.Hsabados;
             MateriaSalon.Hviernes = MateriaSalonDto.Hviernes;
 
@@ -113,10 +112,8 @@ namespace BackAsistencia.Controllers
                 IdMateria = materiaSalonDto.IdMateria,
                 IdSalon = materiaSalonDto.Idsalon,
                 HlunJuv = materiaSalonDto.HlunJuv,
-                Hviernes = materiaSalonDto.Hviernes = materiaSalonDto.HlunJuv,
+                Hviernes = materiaSalonDto.Hviernes,
                 Hsabados = materiaSalonDto.Hsabados,
-
-
 
             };
 
