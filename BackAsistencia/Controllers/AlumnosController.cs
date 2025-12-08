@@ -152,5 +152,72 @@ namespace BackAsistencia.Controllers
         {
             return _context.Alumnos.Any(e => e.NumeroControl == id);
         }
+
+
+        [HttpGet("Horario/{numeroControl}")]
+        public async Task<ActionResult<IEnumerable<HorarioAlumnoDTO>>> GetHorarioAlumno(string numeroControl)
+        {
+
+
+            var query = from h in _context.Horarios
+                        where h.NumeroControl == numeroControl
+
+
+
+                        join hms in _context.HorarioMateriaSalons on h.IdHorario equals hms.IdHorario
+
+                        join ms in _context.MateriaSalons on hms.IdMateriaSalon equals ms.IdMateriaSalon
+
+                        join m in _context.Materia on ms.IdMateria equals m.IdMateria
+
+                        join s in _context.Salons on ms.IdSalon equals s.IdSalon
+
+                        join pm in _context.ProfesorMateria on ms.IdMateriaSalon equals pm.IdMateriaSalon into pmGroup
+                        from subPm in pmGroup.DefaultIfEmpty() 
+
+                        join p in _context.Profesors on subPm.IdProfesor equals p.IdProfesor into pGroup
+                        from subP in pGroup.DefaultIfEmpty() 
+
+                        select new HorarioAlumnoDTO
+                        {
+                            Materia = m.Descripcion,
+                            Salon = s.Descripcion,
+                            Profesor = subP != null ? subP.Nombre : "Por Asignar",
+
+                            LunesJueves = ms.HlunJuv,
+                            Viernes = ms.Hviernes,
+                            Sabado = ms.Hsabados
+                        };
+
+            return await query.ToListAsync();
+        }
+        [HttpGet("HistorialHoy/{numeroControl}")]
+        public async Task<ActionResult<IEnumerable<AsistenciaAlumnoDTO>>> GetHistorialHoy(string numeroControl)
+        {
+            //var hoy = DateOnly.FromDateTime(DateTime.Now);
+            var hoy = new DateOnly(2025, 12, 05);
+
+            var query = from a in _context.Asistencia
+                        join hms in _context.HorarioMateriaSalons on a.ID_HorarioMateriaSalon equals hms.IdHorarioMateriaSalon
+
+                        join h in _context.Horarios on hms.IdHorario equals h.IdHorario
+
+                        join ms in _context.MateriaSalons on hms.IdMateriaSalon equals ms.IdMateriaSalon
+                        join m in _context.Materia on ms.IdMateria equals m.IdMateria
+
+                        where h.NumeroControl == numeroControl && a.Fecha == hoy
+
+                        select new AsistenciaAlumnoDTO
+                        {
+                            Materia = m.Descripcion,
+                            Hora = a.Hora.ToString(),
+                            Estatus = a.Estatus,
+                            Fecha = a.Fecha.ToDateTime(TimeOnly.MinValue)
+                        };
+
+            return await query.ToListAsync();
+        }
     }
+
+
 }

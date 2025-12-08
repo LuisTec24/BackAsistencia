@@ -154,34 +154,54 @@ namespace BackAsistencia.Controllers
             return _context.Profesors.Any(e => e.IdProfesor == id);
         }
 
-        //[HttpGet("mis-grupos")]
-        //[Authorize(Roles = "Maestro")]
-        //public async Task<ActionResult<IEnumerable<ClaseConHorarioDTO>>> GetMisGrupos()
-        //{
-        //    var idProfesorStr = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        //    if (!int.TryParse(idProfesorStr, out int idProfesor)) return Unauthorized();
+        //cosas que hice pa asistencias
+        // GET: api/Profesors/MisGrupos/{idProfesor}
+        [HttpGet("MisGrupos/{idProfesor}")]
+        public async Task<ActionResult<IEnumerable<GrupoDocenteDTO>>> GetMisGrupos(int idProfesor)
+        {
+            var query = from pm in _context.ProfesorMateria
+                        join ms in _context.MateriaSalons on pm.IdMateriaSalon equals ms.IdMateriaSalon
+                        join m in _context.Materia on ms.IdMateria equals m.IdMateria
+                        join s in _context.Salons on ms.IdSalon equals s.IdSalon
+                        where pm.IdProfesor == idProfesor
+                        select new GrupoDocenteDTO
+                        {
+                            IdMateriaSalon = ms.IdMateriaSalon,
+                            Materia = m.Descripcion,
+                            Salon = s.Descripcion,
+                            // Concatenamos horario para mostrarlo bonito
+                            Horario = $"Lun-Juv:{ms.HlunJuv}) (V:{ms.Hviernes}) (S:{ms.Hsabados}"
+                        };
 
-        //    // 1. Obtener IDs de las materias que da el profe
-        //    var materiasDelProfe = await _context.ProfesorMateria
-        //        .Where(pm => pm.IdProfesor == idProfesor)
-        //        .Select(pm => pm.IdMateriaSalon)
-        //        .ToListAsync();
+            return await query.ToListAsync();
+        }
 
-        //    // 2. Obtener TODOS los grupos (HorarioMateriaSalon) de esas materias
-        //        var grupos = await _context.HorarioMateriaSalons
-        //        .Include(h => h.IdMateriaSalonNavigation.IdMateriaNavigation)
-        //        .Include(h => h.IdMateriaSalonNavigation.IdSalonNavigation)
-        //        .Where(h => materiasDelProfe.Contains(h.IdMateriaSalonNavigation.IdMateria))
-        //        .Select(h => new ClaseConHorarioDTO
-        //        {
-        //            IdGrupo = h.IdHorarioMateriaSalon,
-        //            DescripcionCompleta = h.IdMateriaSalonNavigation.IdMateriaNavigation.Descripcion +
-        //                                  " - " + h.IdMateriaSalonNavigation.IdSalonNavigation.Descripcion +
-        //                                     " (" + (h.HlunJuv ?? h.Hsabados ?? h.Hviernes ?? "S/H") + ")"
-        //        })
-        //        .ToListAsync();
+        // GET: api/Profesors/AsistenciasGrupo
+        [HttpGet("AsistenciasGrupo")]
+        public async Task<ActionResult<IEnumerable<AsistenciaDocenteItemDTO>>> GetAsistenciasPorGrupo(
+            [FromQuery] int idMateriaSalon,
+            [FromQuery] DateTime fecha) // Pasamos DateOnly o DateTime
+        {
+            var fechaOnly = DateOnly.FromDateTime(fecha);
 
-        //    return Ok(grupos);
-        //}
+            var query = from a in _context.Asistencia
+                            // Llegamos al alumno desde la asistencia
+                        join hms in _context.HorarioMateriaSalons on a.ID_HorarioMateriaSalon equals hms.IdHorarioMateriaSalon
+                        join h in _context.Horarios on hms.IdHorario equals h.IdHorario
+                        join al in _context.Alumnos on h.NumeroControl equals al.NumeroControl
+
+                        // Filtros: Que sea de ese Grupo (MateriaSalon) y de esa Fecha
+                        where hms.IdMateriaSalon == idMateriaSalon && a.Fecha == fechaOnly
+
+                        select new AsistenciaDocenteItemDTO
+                        {
+                            NumeroControl = al.NumeroControl,
+                            NombreAlumno = al.Nombre,
+                            Estatus = a.Estatus,
+                            Hora = a.Hora.ToString()
+                        };
+
+            return await query.ToListAsync();
+        }
     }
 }

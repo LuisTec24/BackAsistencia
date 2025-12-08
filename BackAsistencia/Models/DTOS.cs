@@ -140,39 +140,38 @@
 
         public string Correo { get; set; } = null!;
     }
-    
+
     // > NUEVOS DTO PARA ASISTENCIA Y HORARIO (El back hace el pastel pa que el front solo muestre el pastel WUOOO) < //
-    public class AsistenciaItemDTO
+
+    public class HorarioAlumnoDTO
     {
         public string Materia { get; set; }
-        public DateOnly Fecha { get; set; }
-        public TimeOnly Hora { get; set; }
-    }
-    public class HorarioItemDTO
-    {
-        public string NombreMateria { get; set; }
-        public string Profesor { get; set; }
         public string Salon { get; set; }
-        public string HorarioTexto1 { get; set; }
-        public string HorarioDias1 { get; set; }
-        public string HorarioTexto2 { get; set; }
-        public string HorarioDias2 { get; set; }
-        public string HorarioTexto3 { get; set; }
-        public string HorarioDias3 { get; set; }
+        public string Profesor { get; set; }
+        public string LunesJueves { get; set; } // HLunJuv
+        public string Viernes { get; set; }     // HViernes
+        public string Sabado { get; set; }      // HSabados
     }
-    // DTO para el reporte de asistencia que verá el profesor
-    public class ClaseConHorarioDTO
+    public class AsistenciaAlumnoDTO
     {
-        public int IdGrupo { get; set; } // Es el ID_HorarioMateriaSalon
-        public string DescripcionCompleta { get; set; } // "Matemáticas - Aula 1 (08:00 - 09:00)"
+        public string Materia { get; set; }
+        public string Hora { get; set; }    // Ej: "08:30:00"
+        public string Estatus { get; set; } // "Asistencia", "Falta", "Retardo"
+        public DateTime Fecha { get; set; } // Para saber si es de hoy
     }
-
-    // Este se queda igual para el reporte
-    public class AsistenciaReporteItemDTO
+    public class GrupoDocenteDTO
     {
-        public int IdAsistencia { get; set; }
+        public int IdMateriaSalon { get; set; } // La llave para buscar asistencias
+        public string Materia { get; set; }
+        public string Salon { get; set; }
+        public string Horario { get; set; } // Texto tipo "L-J 7-8"
+    }
+    public class AsistenciaDocenteItemDTO
+    {
+        public string NumeroControl { get; set; }
         public string NombreAlumno { get; set; }
-        public string Estatus { get; set; }
+        public string Estatus { get; set; } // "Asistencia", "Falta"
+        public string Hora { get; set; }
     }
 
 
