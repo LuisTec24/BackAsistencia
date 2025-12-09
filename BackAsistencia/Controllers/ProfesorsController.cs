@@ -155,7 +155,6 @@ namespace BackAsistencia.Controllers
         }
 
         //cosas que hice pa asistencias
-        // GET: api/Profesors/MisGrupos/{idProfesor}
         [HttpGet("MisGrupos/{idProfesor}")]
         public async Task<ActionResult<IEnumerable<GrupoDocenteDTO>>> GetMisGrupos(int idProfesor)
         {
@@ -185,16 +184,15 @@ namespace BackAsistencia.Controllers
             var fechaOnly = DateOnly.FromDateTime(fecha);
 
             var query = from a in _context.Asistencia
-                            // Llegamos al alumno desde la asistencia
                         join hms in _context.HorarioMateriaSalons on a.ID_HorarioMateriaSalon equals hms.IdHorarioMateriaSalon
                         join h in _context.Horarios on hms.IdHorario equals h.IdHorario
                         join al in _context.Alumnos on h.NumeroControl equals al.NumeroControl
 
-                        // Filtros: Que sea de ese Grupo (MateriaSalon) y de esa Fecha
                         where hms.IdMateriaSalon == idMateriaSalon && a.Fecha == fechaOnly
 
                         select new AsistenciaDocenteItemDTO
                         {
+                            IdAsistencia = a.IdAsistencia,
                             NumeroControl = al.NumeroControl,
                             NombreAlumno = al.Nombre,
                             Estatus = a.Estatus,
@@ -202,6 +200,22 @@ namespace BackAsistencia.Controllers
                         };
 
             return await query.ToListAsync();
+        }
+        [HttpPut("ActualizarEstatus")]
+        public async Task<IActionResult> ActualizarEstatus([FromBody] ActualizarAsistenciaDTO dto)
+        {
+            var asistencia = await _context.Asistencia.FindAsync(dto.IdAsistencia);
+
+            if (asistencia == null)
+            {
+                return NotFound("No se encontró el registro de asistencia.");
+            }
+
+            asistencia.Estatus = dto.NuevoEstatus;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { mensaje = "Estatus actualizado correctamente" });
         }
     }
 }

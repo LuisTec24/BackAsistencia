@@ -168,12 +168,17 @@
     }
     public class AsistenciaDocenteItemDTO
     {
+        public int IdAsistencia { get; set; } // <--- NUEVO (Vital para editar)
         public string NumeroControl { get; set; }
         public string NombreAlumno { get; set; }
-        public string Estatus { get; set; } // "Asistencia", "Falta"
+        public string Estatus { get; set; }
         public string Hora { get; set; }
     }
-
+    public class ActualizarAsistenciaDTO
+    {
+        public int IdAsistencia { get; set; }
+        public string NuevoEstatus { get; set; } // "Asistencia", "Falta", "Retardo", etc.
+    }
 
 
 }
