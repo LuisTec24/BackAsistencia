@@ -168,7 +168,6 @@ namespace BackAsistencia.Controllers
                             IdMateriaSalon = ms.IdMateriaSalon,
                             Materia = m.Descripcion,
                             Salon = s.Descripcion,
-                            // Concatenamos horario para mostrarlo bonito
                             Horario = $"Lun-Juv:{ms.HlunJuv}) (V:{ms.Hviernes}) (S:{ms.Hsabados}"
                         };
 

@@ -113,12 +113,12 @@ namespace BackAsistencia.Controllers
         public async Task<ActionResult<Salon>> Scanner(int IdScanner, string Nc)
         {
             //pruebas
-         //   var ahora = DateTime.Today.AddHours(8).AddMinutes(30);
-             var ahora = new DateTime(2025, 12, 10, 10, 07, 0);
+            //var ahora = DateTime.Today.AddHours(12).AddMinutes(01);
+            //var ahora = new DateTime(2025, 12, 10, 10, 07, 0);
             // Hoy a las 9:30 AM
             //12:00-13:00 hay una materia de
 
-            // var ahora = DateTime.Now;//
+            var ahora = DateTime.Now;
             // que dia de la semana es 1,2,3
             int grupoDia = ahora.DayOfWeek switch
             {
@@ -281,7 +281,6 @@ namespace BackAsistencia.Controllers
         [HttpPost("bulk-asistencias")]
         public async Task<IActionResult> BulkAsistencias([FromBody] List<int> ListaHorariosAlumnos, DateTime ahora)
             {
-            //var ahora = DateTime.Now;//
             
             var entidades = ListaHorariosAlumnos.Select(a => new Asistencia
             {
@@ -303,7 +302,7 @@ namespace BackAsistencia.Controllers
             if (hora <= d)
             {
                 //    IdRefencia = 1;
-                Estatus = "Presente";
+                Estatus = "Asistencia";
             }
             else
             {

@@ -194,8 +194,8 @@ namespace BackAsistencia.Controllers
         [HttpGet("HistorialHoy/{numeroControl}")]
         public async Task<ActionResult<IEnumerable<AsistenciaAlumnoDTO>>> GetHistorialHoy(string numeroControl)
         {
-            //var hoy = DateOnly.FromDateTime(DateTime.Now);
-            var hoy = new DateOnly(2025, 12, 05);
+            var hoy = DateOnly.FromDateTime(DateTime.Now);
+            //var hoy = new DateOnly(2025, 12, 05);
 
             var query = from a in _context.Asistencia
                         join hms in _context.HorarioMateriaSalons on a.ID_HorarioMateriaSalon equals hms.IdHorarioMateriaSalon
